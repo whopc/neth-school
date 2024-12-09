@@ -23,7 +23,8 @@ class FamilyResource extends Resource
     protected static ?string $model = Family::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
-
+    protected static ?string $navigationLabel = 'Familias';
+    protected static ?string $navigationGroup = 'Academic Community';
     public static function form(Form $form): Form
     {
         return $form
@@ -173,6 +174,7 @@ class FamilyResource extends Resource
                                     ->label('Mother')
                                     ->relationship('mother', 'name')
                                     ->searchable()
+                                    ->required()
                                     ->getSearchResultsUsing(function (string $searchQuery) {
                                         return Progenitor::where('role', 'mother')
                                             ->where(function ($query) use ($searchQuery) {

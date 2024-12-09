@@ -1,24 +1,23 @@
 <?php
 
-namespace App\Filament\Resources\FamilyResource\Pages;
+namespace App\Filament\Resources\LevelResource\Pages;
 
-use App\Filament\Resources\FamilyResource;
+use App\Filament\Resources\LevelResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditFamily extends EditRecord
+class EditLevel extends EditRecord
 {
-    protected static string $resource = FamilyResource::class;
+    protected static string $resource = LevelResource::class;
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
     }
-
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make(),
         ];
-
     }
 }

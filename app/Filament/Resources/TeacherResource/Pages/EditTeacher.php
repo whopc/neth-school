@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\FamilyResource\Pages;
+namespace App\Filament\Resources\TeacherResource\Pages;
 
-use App\Filament\Resources\FamilyResource;
+use App\Filament\Resources\TeacherResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditFamily extends EditRecord
+class EditTeacher extends EditRecord
 {
-    protected static string $resource = FamilyResource::class;
+    protected static string $resource = TeacherResource::class;
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
@@ -19,6 +20,5 @@ class EditFamily extends EditRecord
         return [
             Actions\DeleteAction::make(),
         ];
-
     }
 }
