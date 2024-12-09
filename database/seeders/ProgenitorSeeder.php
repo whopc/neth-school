@@ -13,12 +13,12 @@ class ProgenitorSeeder extends Seeder
      */
     public function run(): void
     {
-        // Crear 10 padres
+        // Crear 10 fathers
         for ($i = 0; $i < 10; $i++) {
             Progenitor::factory()->father()->create();
         }
 
-        // Crear 10 madres
+        // Crear 10 mothers
         for ($i = 0; $i < 10; $i++) {
             Progenitor::factory()->mother()->create();
         }

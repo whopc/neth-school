@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('t_address')->nullable();
             $table->string('t_telephone')->nullable();
             $table->string('kinship')->nullable();
+            $table->unique(['father_id', 'mother_id']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
