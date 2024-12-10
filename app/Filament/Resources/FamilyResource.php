@@ -25,12 +25,18 @@ class FamilyResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Familias';
     protected static ?string $navigationGroup = 'Academic Community';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Section::make()
                     ->schema([
+                        TextInput::make('id')
+                            ->label('ID')
+                            ->disabled() // Deshabilitado para solo lectura
+                            ->hidden(fn ($record) => is_null($record)) // Ocultar en la creación de registros nuevos
+                            ->afterStateHydrated(fn ($component, $state) => $state = $component->getRecord()?->id),
                         Grid::make(2)
                             ->schema([
                                 // Columna 1: Campos del father
@@ -263,7 +269,6 @@ class FamilyResource extends Resource
                                                         'national_id' => 'National Id',
                                                         'passport' => 'passport',
                                                     ])
-                                                    //->value(fn ($record) => $record->id_type) // Cargar el valor actual al editar
                                                     ->required()
                                                     ->reactive()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('id_type', $state->record->id_type ?? 'national_id')),
