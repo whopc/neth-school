@@ -13,9 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-            ProgenitorSeeder::class,
-        ]);
+
         // User::factory(10)->create();
 
         User::factory()->create([
@@ -23,5 +21,17 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
 
         ]);
+        $this->call(GradesTableSeeder::class);
+        $this->call(LevelsTableSeeder::class);
+        $this->call(TeachersTableSeeder::class);
+        $this->call(SectionsTableSeeder::class);
+        $this->call(AcademicYearsTableSeeder::class);
+        $this->call(AcademicLevelsTableSeeder::class);
+        $this->call(AcademicGradesTableSeeder::class);
+        $this->call(GradeSectionsTableSeeder::class);
+        $this->call(ProgenitorsTableSeeder::class);
+        $this->call(FamiliesTableSeeder::class);
+        $this->call(AcademicLevelsTableSeeder::class);
+
     }
 }

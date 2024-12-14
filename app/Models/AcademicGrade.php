@@ -25,7 +25,7 @@ class AcademicGrade extends Model
 
     public function grade()
     {
-        return $this->belongsTo(\App\Models\Grade::class);
+        return $this->belongsTo(Grade::class, 'grade_id');
     }
 
     public function gradeSections()

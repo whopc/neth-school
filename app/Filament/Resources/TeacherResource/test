@@ -1,0 +1,21 @@
+Select::make('family_id')
+                                    ->label('Family')
+                                    ->relationship('family', 'last_name')
+                                    ->searchable()
+                                    ->getSearchResultsUsing(function (string $searchQuery) {
+                                        return Progenitor::where(function ($query) use ($searchQuery) {
+                                                $query->where('Last_name', 'like', "%$searchQuery%")
+                                                    ->orWhere('id', 'like', "%$searchQuery%");
+                                            })
+                                            ->get()
+                                            ->mapWithKeys(fn($family) => [
+                                                $family->id => "({$family->id}) {$family->last_name})"
+                                            ]);
+                                    })
+                                    ->getOptionLabelUsing(fn($value) => Family::find($value)?->last_name . ' ' . ' (' . Family::find($value)?->id . ')')
+                                    ->createOptionForm([
+
+Select::make('family_id')
+                                    ->relationship('family', 'id')
+                                    ->label('Family ID')
+                                    ->required(),

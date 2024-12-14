@@ -1,0 +1,445 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+
+class ProgenitorsTableSeeder extends Seeder
+{
+
+    /**
+     * Auto generated seed file
+     *
+     * @return void
+     */
+    public function run()
+    {
+        
+
+        \DB::table('progenitors')->delete();
+        
+        \DB::table('progenitors')->insert(array (
+            0 => 
+            array (
+                'id' => 1,
+                'name' => 'Ewell',
+                'first_last_name' => 'Rippin',
+                'second_last_name' => 'Schiller',
+                'id_type' => 'national_id',
+                'id_number' => '69068461009',
+                'email' => 'horacio79@example.net',
+                'address' => '1498 Witting Mills
+North Garnett, IA 96307-6820',
+            'home_phone' => '+1 (484) 518-6893',
+                'mobile_phone' => '321.770.2726',
+                'place_of_work' => 'Grenada',
+                'work_phone' => '+1-769-223-5577',
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            1 => 
+            array (
+                'id' => 2,
+                'name' => 'Fabian',
+                'first_last_name' => 'Hill',
+                'second_last_name' => 'Douglas',
+                'id_type' => 'national_id',
+                'id_number' => '07361897238',
+                'email' => 'heidenreich.lindsey@example.net',
+                'address' => '74189 Eusebio Point
+Hilperthaven, FL 95737-2493',
+                'home_phone' => NULL,
+                'mobile_phone' => '1-614-835-3694',
+                'place_of_work' => NULL,
+                'work_phone' => '+1-781-666-5427',
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            2 => 
+            array (
+                'id' => 3,
+                'name' => 'Juston',
+                'first_last_name' => 'Haag',
+                'second_last_name' => 'Hamill',
+                'id_type' => 'passport',
+                'id_number' => '19738807989',
+                'email' => 'schowalter.daisha@example.net',
+                'address' => '5337 Damien Brook
+Lake Amariberg, KY 76550',
+                'home_phone' => NULL,
+                'mobile_phone' => '440-818-8782',
+                'place_of_work' => 'French Southern Territories',
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            3 => 
+            array (
+                'id' => 4,
+                'name' => 'Darryl',
+                'first_last_name' => 'Osinski',
+                'second_last_name' => 'Harber',
+                'id_type' => 'national_id',
+                'id_number' => '78244179000',
+                'email' => 'herta84@example.org',
+                'address' => '68873 Shanahan Hollow Apt. 824
+South Herbert, VT 70691',
+                'home_phone' => '747-251-3209',
+            'mobile_phone' => '+1 (435) 680-7655',
+                'place_of_work' => 'Guyana',
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            4 => 
+            array (
+                'id' => 5,
+                'name' => 'Zackary',
+                'first_last_name' => 'Heaney',
+                'second_last_name' => 'Fritsch',
+                'id_type' => 'national_id',
+                'id_number' => '73803616760',
+                'email' => 'pcorkery@example.org',
+                'address' => '17190 Khalid Point Apt. 045
+Schmelerview, CO 11129-6923',
+                'home_phone' => NULL,
+                'mobile_phone' => '1-813-695-2859',
+                'place_of_work' => 'Brunei Darussalam',
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            5 => 
+            array (
+                'id' => 6,
+                'name' => 'Reese',
+                'first_last_name' => 'Cronin',
+                'second_last_name' => 'Daniel',
+                'id_type' => 'national_id',
+                'id_number' => '07402755370',
+                'email' => 'schaden.cameron@example.net',
+                'address' => '9856 Yesenia Lake Apt. 942
+Lake Sheldonbury, GA 04104-3707',
+                'home_phone' => '570-793-8351',
+                'mobile_phone' => '+13019871111',
+                'place_of_work' => 'Saint Lucia',
+                'work_phone' => '1-417-607-3621',
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            6 => 
+            array (
+                'id' => 7,
+                'name' => 'Ulises',
+                'first_last_name' => 'Hessel',
+                'second_last_name' => 'Ward',
+                'id_type' => 'national_id',
+                'id_number' => '83342879193',
+                'email' => 'kenya52@example.org',
+                'address' => '1586 Christiansen Isle Apt. 347
+Lake Teresaton, ND 38087',
+                'home_phone' => NULL,
+                'mobile_phone' => '+13864679412',
+                'place_of_work' => NULL,
+                'work_phone' => '+19018348100',
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            7 => 
+            array (
+                'id' => 8,
+                'name' => 'Emilio',
+                'first_last_name' => 'Breitenberg',
+                'second_last_name' => 'Jerde',
+                'id_type' => 'passport',
+                'id_number' => '92724167607',
+                'email' => 'reagan93@example.net',
+                'address' => '456 Murazik Harbor
+Maybelletown, IL 50047-5526',
+            'home_phone' => '(508) 644-0299',
+                'mobile_phone' => '1-636-458-6623',
+                'place_of_work' => NULL,
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            8 => 
+            array (
+                'id' => 9,
+                'name' => 'Omer',
+                'first_last_name' => 'Brown',
+                'second_last_name' => 'Williamson',
+                'id_type' => 'passport',
+                'id_number' => '80422495802',
+                'email' => 'larkin.kaitlin@example.org',
+                'address' => '859 Schinner Land Suite 470
+Dooleyfort, VT 91214-3232',
+                'home_phone' => '+1-216-787-3507',
+                'mobile_phone' => '1-731-515-8403',
+                'place_of_work' => 'Maldives',
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            9 => 
+            array (
+                'id' => 10,
+                'name' => 'Grayce',
+                'first_last_name' => 'Watsica',
+                'second_last_name' => 'Nitzsche',
+                'id_type' => 'passport',
+                'id_number' => '61518705149',
+                'email' => 'johathan49@example.com',
+                'address' => '90417 Queenie Pines Suite 842
+Kuhlmanville, KS 57687',
+                'home_phone' => NULL,
+                'mobile_phone' => '1-520-263-2274',
+                'place_of_work' => NULL,
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            10 => 
+            array (
+                'id' => 11,
+                'name' => 'Kyra',
+                'first_last_name' => 'Kohler',
+                'second_last_name' => 'Nolan',
+                'id_type' => 'national_id',
+                'id_number' => '03027204161',
+                'email' => 'magali.medhurst@example.com',
+                'address' => '103 Kuphal Track Suite 032
+North Ayla, IN 57453',
+                'home_phone' => NULL,
+            'mobile_phone' => '+1 (986) 431-4599',
+                'place_of_work' => 'Sudan',
+                'work_phone' => '1-717-874-6149',
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            11 => 
+            array (
+                'id' => 12,
+                'name' => 'Adriana',
+                'first_last_name' => 'Labadie',
+                'second_last_name' => 'Howell',
+                'id_type' => 'national_id',
+                'id_number' => '37544440154',
+                'email' => 'gerardo66@example.net',
+                'address' => '10050 Grant Causeway Suite 481
+Port Ryan, VT 61558-4353',
+                'home_phone' => '+1-657-450-1491',
+            'mobile_phone' => '(331) 935-2436',
+                'place_of_work' => NULL,
+                'work_phone' => '+13467905191',
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            12 => 
+            array (
+                'id' => 13,
+                'name' => 'Stacy',
+                'first_last_name' => 'Romaguera',
+                'second_last_name' => 'Gusikowski',
+                'id_type' => 'passport',
+                'id_number' => '69225173621',
+                'email' => 'abraham.braun@example.org',
+                'address' => '8341 Littel Bypass Suite 996
+Torpfurt, NV 18923',
+                'home_phone' => NULL,
+                'mobile_phone' => '1-980-935-9418',
+                'place_of_work' => 'Zimbabwe',
+                'work_phone' => NULL,
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            13 => 
+            array (
+                'id' => 14,
+                'name' => 'Leonora',
+                'first_last_name' => 'Schuster',
+                'second_last_name' => 'O\'Connell',
+                'id_type' => 'national_id',
+                'id_number' => '38300970638',
+                'email' => 'brice.oberbrunner@example.net',
+                'address' => '187 Lynch Shoals
+Kaitlynstad, MO 26526-2928',
+                'home_phone' => NULL,
+            'mobile_phone' => '(502) 900-8322',
+                'place_of_work' => 'British Virgin Islands',
+                'work_phone' => '276-481-2992',
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            14 => 
+            array (
+                'id' => 15,
+                'name' => 'Kiara',
+                'first_last_name' => 'Stroman',
+                'second_last_name' => 'Stiedemann',
+                'id_type' => 'national_id',
+                'id_number' => '21848655576',
+                'email' => 'maximo28@example.org',
+                'address' => '782 Julien Walk
+Tierrabury, MI 61378-0857',
+                'home_phone' => NULL,
+                'mobile_phone' => '520.220.7681',
+                'place_of_work' => NULL,
+                'work_phone' => NULL,
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            15 => 
+            array (
+                'id' => 16,
+                'name' => 'Prudence',
+                'first_last_name' => 'Effertz',
+                'second_last_name' => 'Boyle',
+                'id_type' => 'passport',
+                'id_number' => '77701310760',
+                'email' => 'marie.wiegand@example.com',
+                'address' => '28619 Parker Creek
+Nienowview, FL 22571-3156',
+                'home_phone' => NULL,
+                'mobile_phone' => '743.779.2915',
+                'place_of_work' => NULL,
+                'work_phone' => '+1.281.727.9804',
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            16 => 
+            array (
+                'id' => 17,
+                'name' => 'Genesis',
+                'first_last_name' => 'Gutmann',
+                'second_last_name' => 'Zieme',
+                'id_type' => 'passport',
+                'id_number' => '17846436197',
+                'email' => 'ibashirian@example.net',
+                'address' => '4795 Emmanuel Lodge
+Croninshire, ND 62167',
+                'home_phone' => NULL,
+            'mobile_phone' => '(580) 818-4396',
+                'place_of_work' => 'Papua New Guinea',
+                'work_phone' => NULL,
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            17 => 
+            array (
+                'id' => 18,
+                'name' => 'Evie',
+                'first_last_name' => 'Steuber',
+                'second_last_name' => 'Klein',
+                'id_type' => 'passport',
+                'id_number' => '64075865411',
+                'email' => 'waelchi.michale@example.net',
+                'address' => '7088 Mraz Turnpike
+New Brionna, OH 42143',
+                'home_phone' => '+1-682-607-9937',
+                'mobile_phone' => '+1-831-261-4526',
+                'place_of_work' => NULL,
+                'work_phone' => NULL,
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            18 => 
+            array (
+                'id' => 19,
+                'name' => 'Marlene',
+                'first_last_name' => 'Friesen',
+                'second_last_name' => 'O\'Conner',
+                'id_type' => 'passport',
+                'id_number' => '95159912322',
+                'email' => 'fnienow@example.com',
+                'address' => '8233 Smitham Field
+East Jorge, ID 19451',
+                'home_phone' => NULL,
+            'mobile_phone' => '(925) 883-4308',
+                'place_of_work' => NULL,
+            'work_phone' => '(920) 741-1946',
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            19 => 
+            array (
+                'id' => 20,
+                'name' => 'Kianna',
+                'first_last_name' => 'Osinski',
+                'second_last_name' => 'Hayes',
+                'id_type' => 'national_id',
+                'id_number' => '21493675905',
+                'email' => 'miguel67@example.net',
+                'address' => '32155 Lavon Circle
+North Rebeka, AK 04436',
+                'home_phone' => '512.488.0500',
+            'mobile_phone' => '+1 (283) 214-1485',
+                'place_of_work' => 'Burundi',
+                'work_phone' => NULL,
+                'role' => 'mother',
+                'created_at' => '2024-12-09 20:41:36',
+                'updated_at' => '2024-12-09 20:41:36',
+                'deleted_at' => NULL,
+            ),
+            20 => 
+            array (
+                'id' => 21,
+                'name' => 'AIMEE EEE',
+                'first_last_name' => 'WELCH',
+                'second_last_name' => NULL,
+                'id_type' => 'national_id',
+                'id_number' => '546-4565474-5',
+                'email' => NULL,
+                'address' => NULL,
+                'home_phone' => '+1.608.456.4539',
+                'mobile_phone' => NULL,
+                'place_of_work' => NULL,
+                'work_phone' => NULL,
+                'role' => 'father',
+                'created_at' => '2024-12-10 01:47:16',
+                'updated_at' => '2024-12-10 01:47:16',
+                'deleted_at' => NULL,
+            ),
+        ));
+        
+        
+    }
+}

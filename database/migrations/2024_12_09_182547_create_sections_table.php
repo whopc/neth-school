@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sections', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('short_name')->nullable();
             $table->foreignId('grade_id')->nullable()->constrained('grades')->onDelete('set null');
             $table->unique(['name', 'grade_id']);
             $table->timestamps();

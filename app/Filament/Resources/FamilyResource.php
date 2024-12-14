@@ -17,7 +17,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Validation\Rule;
-
+use App\Filament\Resources\FamilyResource\RelationManagers;
 class FamilyResource extends Resource
 {
     protected static ?string $model = Family::class;
@@ -173,6 +173,10 @@ class FamilyResource extends Resource
                                             ]),
                                     ])
                                     ->reactive()
+                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set,$state, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? ''))
+                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('nombre_padre', Progenitor::find($get('father_id'))?->name ?? ''))
                                     ->afterStateUpdated(fn(callable $set, $state, $get) => $set('last_name', trim((Progenitor::find($get('father_id'))?->first_last_name ?? '') . ' ' . (Progenitor::find($get('mother_id'))?->first_last_name ?? '')))),
 
                                 // Columna 2: Campos de la mother
@@ -327,6 +331,10 @@ class FamilyResource extends Resource
                                         };
                                     })
                                     ->reactive()
+                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set,$state, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? ''))
+                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('nombre_padre', Progenitor::find($get('father_id'))?->name ?? ''))
                                     ->afterStateUpdated(fn(callable $set, $state, $get) => $set('last_name', trim((Progenitor::find($get('father_id'))?->first_last_name ?? '') . ' ' . (Progenitor::find($get('mother_id'))?->first_last_name ?? '')))),
                             ]),
 
@@ -335,7 +343,30 @@ class FamilyResource extends Resource
                             ->required()
                             ->afterStateUpdated(fn($state, callable $set) => $set('last_name', strtoupper($state)))
                             ->reactive(),
-
+                        Section::make('Detalles de los Padres')
+                            ->schema([
+                                TextInput::make('nombre_padre')
+                                    ->label('Nombre del Padre')
+                                    ->disabled()
+                                    ->reactive()
+                                    ->afterStateHydrated(fn($set, $get) => $set('nombre_padre', Progenitor::find($get('father_id'))?->name ?? '')),
+                                TextInput::make('apellido_padre')
+                                    ->label('Apellido del Padre')
+                                    ->disabled()
+                                    ->reactive()
+                                    ->afterStateHydrated(fn($set, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? '')),
+                                TextInput::make('nombre_madre')
+                                    ->label('Nombre de la Madre')
+                                    ->disabled()
+                                    ->reactive()
+                                    ->afterStateHydrated(fn($set, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? '')),
+                                TextInput::make('apellido_madre')
+                                    ->label('Apellido de la Madre')
+                                    ->disabled()
+                                    ->reactive()
+                                    ->afterStateHydrated(fn($set, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? '')),
+                            ])
+                            ->columns(2),
                         Section::make('Tutor')
                             ->schema([
                                 Toggle::make('tutor_enabled')
@@ -414,7 +445,7 @@ class FamilyResource extends Resource
     public static function getRelations(): array
     {
         return [
-            // Aquí podrías agregar relaciones adicionales si las tienes
+            RelationManagers\StudentsRelationManager::class,
         ];
     }
 

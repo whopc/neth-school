@@ -45,6 +45,7 @@ class SectionResource extends Resource
                     ->placeholder('Seleccionar un grado')
                     ->required(),
                 TextInput::make('name')->required(),
+                TextInput::make('short_name')->required(),
 
             ]);
     }
@@ -63,6 +64,8 @@ class SectionResource extends Resource
 
                     ->searchable(), // Permite buscar por orden// Permite buscar por orden
                 TextColumn::make('name'),
+                TextColumn::make('short_name'),
+
             ])
             ->filters([
                 //

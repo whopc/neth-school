@@ -11,6 +11,7 @@ class Section extends Model
 
     protected $fillable = [
         'name',
+        'short_name',
         'grade_id'
 
     ];

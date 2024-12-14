@@ -35,4 +35,8 @@ class Family extends Model
     {
         return $this->belongsTo(Progenitor::class, 'mother_id')->where('role', 'mother');
     }
+    public function students()
+    {
+        return $this->hasMany(Student::class, 'family_id');
+    }
 }

@@ -20,4 +20,9 @@ class AcademicYear extends Model
     {
         return $this->hasMany(AcademicLevel::class, 'academic_year_id');
     }
+    public function levels()
+    {
+        return $this->hasManyThrough(Level::class, AcademicLevel::class, 'academic_year_id', 'id', 'id', 'level_id');
+    }
+
 }
