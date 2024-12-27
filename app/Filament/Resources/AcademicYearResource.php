@@ -2,13 +2,15 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\Grade;
+use App\Models\Level;
 use Filament\Forms;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\AcademicYear;
-use App\Models\AcademicLevel;
-use App\Models\AcademicGrade;
+//use App\Models\AcademicLevel;
+//use App\Models\AcademicGrade;
 use App\Models\Section;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
@@ -16,10 +18,10 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+//use Illuminate\Database\Eloquent\Builder;
+//use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\AcademicYearResource\Pages;
-use App\Filament\Resources\AcademicYearResource\RelationManagers;
+//use App\Filament\Resources\AcademicYearResource\RelationManagers;
 
 class AcademicYearResource extends Resource
 {
@@ -56,8 +58,11 @@ class AcademicYearResource extends Resource
                                     ->schema([
                                         Forms\Components\Select::make('level_id')
                                             ->label('Level')
+                                            ->live(onBlur: true)
                                             ->relationship('level', 'name') // Adjust according to your Level model
-                                            ->required(),
+                                            ->required()
+                                            ->reactive(),
+
                                         Forms\Components\TextInput::make('admission_fees')
                                             ->label('Admission Fees')
                                             ->required()
@@ -71,12 +76,8 @@ class AcademicYearResource extends Resource
                                             ->schema([
                                                 Forms\Components\Select::make('grade_id')
                                                     ->label('Grade')
-                                                    ->relationship('grade', 'name') // Adjust according to your Grade model
-                                                    ->required()
-                                                    ->reactive()
-                                                    ->afterStateUpdated(function (callable $set, $state, $get) {
-                                                        $set('grade_id', $state);
-                                                    }),
+                                                    ->relationship('grade', 'name'),// Adjust according to your Grade model
+
 
                                                 Forms\Components\TextInput::make('fee_cuota')
                                                     ->label('Fee Cuota')
@@ -87,6 +88,7 @@ class AcademicYearResource extends Resource
                                                     ->label('Platform'),
 
                                                 Forms\Components\Repeater::make('gradeSections')
+                                                    ->columns(2)
                                                     ->relationship('gradeSections')
                                                     ->schema([
                                                         Select::make('section_id')
@@ -101,17 +103,36 @@ class AcademicYearResource extends Resource
                                                                     ->pluck('name', 'id') // Devuelve las opciones de las secciones
                                                                     ->toArray(); // Convierte a un array para que Filament lo pueda utilizar
                                                             })
+                                                            ->fixIndistinctState()
                                                             ->required(),
                                                         Select::make('main_teacher_id')
                                                             ->relationship('Teacher' , 'first_name')
+                                                            ->fixIndistinctState()
                                                             ->label('Main Teacher'),
+
                                                     ])
-
+                                                    ->grid(2)
+                                                    ->itemLabel(function (array $state): ?string {
+                                                        // Obtiene el nombre de la sección basado en section_id
+                                                        $section = Section::find($state['section_id'] ?? null);
+                                                        return $section ? "Sección: {$section->name}" : 'Nueva Sección';
+                                                    }),
                                             ])
-
+                                            ->columnSpan(3)
+                                            ->itemLabel(function (array $state): ?string {
+                                                // Obtiene el nombre de la sección basado en section_id
+                                                $grade = Grade::find($state['grade_id'] ?? null);
+                                                return $grade ? "Grado: {$grade->name}" : 'Nuevo Grado';
+                                            }),
                                     ])
-
+                                    ->columnSpan(2)
+                                    ->itemLabel(function (array $state): ?string {
+                                        // Obtiene el nombre de la sección basado en section_id
+                                        $level = Level::find($state['level_id'] ?? null);
+                                        return $level ? "Nivel: {$level->name}" : 'Nuevo Nivel';
+                                    }),
                             ]),
+
                     ])
                     ->columnSpan(2), // Adjust based on your layout
             ]);

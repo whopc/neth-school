@@ -32,5 +32,13 @@ class AcademicGrade extends Model
     {
         return $this->hasMany(GradeSection::class , 'academic_grade_id');
     }
+    protected function resolveItemLabel(array $state, string $modelClass, string $fieldKey, string $labelField): ?string
+    {
+        if (isset($state[$fieldKey])) {
+            $model = $modelClass::find($state[$fieldKey]);
+            return $model ? $model->$labelField : null;
+        }
+        return null;
+    }
 
 }
