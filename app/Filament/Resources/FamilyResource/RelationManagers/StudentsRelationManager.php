@@ -18,6 +18,7 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -232,7 +233,29 @@ class StudentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('first_name')
             ->columns([
-                Tables\Columns\TextColumn::make('first_name'),
+                TextColumn::make('enrollment_no')
+                    ->label('Student ID')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('first_name')
+                    ->label('Fist Name')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('studentYears.grade.name')
+                    ->label('Grade')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->grade->name ?? 'N/A'),
+
+                // Mostrar la sección del último registro en StudentYear
+                TextColumn::make('studentYears.section.name')
+                    ->label('Section')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->section->name ?? 'N/A'),
+
             ])
             ->filters([
                 //

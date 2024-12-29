@@ -16,12 +16,20 @@ class CreateStudent extends CreateRecord
     {
         $data['enrollment_no'] = Student::generateEnrollmentNumber();
         $data['email'] = "{$data['enrollment_no']}@cefodipf.edu.do"; // Set email using enrollment_no
+        $studentYearData = $data['student_year'] ?? null;
+        unset($data['student_year']);
 
         return $data;
     }
 
     protected function afterCreate(): void
     {
+        $studentYearData = $this->data['student_year'] ?? null;
+
+        if ($studentYearData) {
+            // Create the StudentYear record
+            $this->record->studentYears()->create($studentYearData);
+        }
 
 //        $academicYearData = [
 //            'student_id' => $this->record->id, // Get the created student's ID

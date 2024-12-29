@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\AcademicYear;
 use App\Models\Family;
 use App\Models\Progenitor;
+use App\Models\Section;
 use Closure;
 use Filament\Forms;
+use Filament\Forms\Components\Radio;
 use Filament\Tables;
 use App\Models\Student;
 use Filament\Forms\Form;
@@ -258,7 +261,109 @@ class StudentResource extends Resource
                                 ])
                         ])
                         //->description('Provide the health details for the student.'),
-                ])
+                ]),
+                    Forms\Components\Wizard\Step::make('Academic Information')
+                        ->schema([
+                            Grid::make()->columns(2)->schema([
+                                Select::make('student_year.academic_year_id')
+                                    ->label('Academic Year')
+                                    ->options(function () {
+                                        return AcademicYear::pluck('name', 'id')->toArray();
+                                    })
+                                    ->reactive()
+                                    ->required()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                Select::make('student_year.level_id')
+                                    ->label('Level')
+                                    ->options(function (callable $get) {
+                                        $academicYearId = $get('student_year.academic_year_id');
+                                        if (!$academicYearId) return [];
+
+                                        return \App\Models\AcademicLevel::where('academic_year_id', $academicYearId)
+                                            ->join('levels', 'academic_levels.level_id', '=', 'levels.id')
+                                            ->pluck('levels.name', 'levels.id')
+                                            ->toArray();
+                                    })
+                                    ->reactive()
+                                    ->required()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                Select::make('student_year.grade_id')
+                                    ->label('Grade')
+                                    ->options(function (callable $get) {
+                                        $levelId = $get('student_year.level_id');
+                                        if (!$levelId) return [];
+
+                                        return \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($levelId) {
+                                            $query->where('level_id', $levelId);
+                                        })
+                                            ->join('grades', 'academic_grades.grade_id', '=', 'grades.id')
+                                            ->pluck('grades.name', 'grades.id')
+                                            ->toArray();
+                                    })
+                                    ->reactive()
+                                    ->required()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                Select::make('student_year.section_id')
+                                    ->label('Section')
+                                    ->options(function (callable $get) {
+                                        $gradeId = $get('student_year.grade_id');
+                                        if (!$gradeId) return [];
+
+                                        return Section::where('grade_id', $gradeId)
+                                            ->pluck('name', 'id')
+                                            ->toArray();
+                                    })
+                                    ->required()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                TextInput::make('student_year.classroom')
+                                    ->label('Classroom')
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                TextInput::make('student_year.order_no')
+                                    ->label('Order No')
+                                    ->numeric()
+                                    ->required()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                TextInput::make('student_year.registration_discount')
+                                    ->label('Registration Discount')
+                                    ->numeric()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                Radio::make('student_year.registration_discount_type')
+                                    ->label('Registration Discount Type')
+                                    ->options([
+                                        'percentage' => 'Percentage',
+                                        'fixed' => 'Fixed',
+                                    ])
+                                    ->default('percentage')
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                TextInput::make('student_year.monthly_discount')
+                                    ->label('Monthly Discount')
+                                    ->numeric()
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                Radio::make('student_year.monthly_discount_type')
+                                    ->label('Monthly Discount Type')
+                                    ->options([
+                                        'percentage' => 'Percentage',
+                                        'fixed' => 'Fixed',
+                                    ])
+                                    ->default('percentage')
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
+                                Textarea::make('student_year.notes')
+                                    ->label('Notes')
+                                    ->columnSpan(2)
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+                            ]),
+                        ])
+                        ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                         ])
                     ->columnSpan(2) // Ensure the wizard uses full width
@@ -290,6 +395,18 @@ class StudentResource extends Resource
                     ->sortable()
                     ->formatStateUsing(fn ($record) => "{$record->first_last_name} {$record->second_last_name}")
                     ->searchable(),
+                TextColumn::make('studentYears.grade.name')
+                    ->label('Grade')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->grade->name ?? 'N/A'),
+
+                // Mostrar la sección del último registro en StudentYear
+                TextColumn::make('studentYears.section.name')
+                    ->label('Section')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->section->name ?? 'N/A'),
 
             ])
             ->filters([
