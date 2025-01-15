@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+
 use App\Models\Grade;
 use App\Models\Level;
 use Filament\Forms;
@@ -29,7 +30,15 @@ class AcademicYearResource extends Resource
 
     protected static ?string $navigationIcon = 'fas-school';
 
-    protected static ?string $navigationGroup = 'Academic Structure';
+    protected static ?string $navigationGroup = 'Estructura Académica';
+
+    protected static ?string $navigationLabel = 'Años Académicos';
+
+    protected static ?string $pluralModelLabel = 'Años Académicos';
+    protected static ?string $modelLabel = 'Año Académico';
+
+
+
 
     // Override the label for the resource
     public static function getModelLabel(): string
@@ -43,56 +52,56 @@ class AcademicYearResource extends Resource
             ->schema([
                 Forms\Components\Tabs::make('tabs')
                     ->tabs([
-                        Tab::make('Academic Year')
+                        Tab::make('Academic Year')->label('Año Académico')
                             ->schema([
-                                TextInput::make('name')->required(),
-                                TextInput::make('short_name')->required(),
-                                DatePicker::make('start_date')->required(),
-                                DatePicker::make('end_date')->required(),
+                                TextInput::make('name')->required()->label('Nombre'),
+                                TextInput::make('short_name')->required()->label('Nombre Corto'),
+                                DatePicker::make('start_date')->required()->label('Fecha Inicio'),
+                                DatePicker::make('end_date')->required()->label('Fecha Fin'),
                             ]),
 
-                        Tab::make('Academic Levels')
+                        Tab::make('Academic Levels')->label("Niveles")
                             ->schema([
-                                Forms\Components\Repeater::make('academicLevels')
+                                Forms\Components\Repeater::make('academicLevels')->label('Niveles')
                                     ->relationship('academicLevels')
                                     ->schema([
                                         Forms\Components\Select::make('level_id')
-                                            ->label('Level')
+                                            ->label('Nivel')
                                             ->live(onBlur: true)
                                             ->relationship('level', 'name') // Adjust according to your Level model
                                             ->required()
                                             ->reactive(),
 
                                         Forms\Components\TextInput::make('admission_fees')
-                                            ->label('Admission Fees')
+                                            ->label('Cuota de Inscripción')
                                             ->required()
                                             ->numeric(),
                                         Forms\Components\TextInput::make('materials_fees')
-                                            ->label('Material Fees')
+                                            ->label('Cuota de Materiales')
                                             ->numeric(),
 
-                                        Forms\Components\Repeater::make('academicGrades')
+                                        Forms\Components\Repeater::make('academicGrades')->label('Grados')
                                             ->relationship('academicGrades')
                                             ->schema([
                                                 Forms\Components\Select::make('grade_id')
-                                                    ->label('Grade')
+                                                    ->label('Grado')
                                                     ->relationship('grade', 'name'),// Adjust according to your Grade model
 
 
                                                 Forms\Components\TextInput::make('fee_cuota')
-                                                    ->label('Fee Cuota')
+                                                    ->label('Cuota Mensual')
                                                     ->required()
                                                     ->numeric(),
 
                                                 Forms\Components\Checkbox::make('platform')
-                                                    ->label('Platform'),
+                                                    ->label('Progentis'),
 
-                                                Forms\Components\Repeater::make('gradeSections')
+                                                Forms\Components\Repeater::make('gradeSections')->label('Secciones')
                                                     ->columns(2)
                                                     ->relationship('gradeSections')
                                                     ->schema([
                                                         Select::make('section_id')
-                                                            ->label('Section')
+                                                            ->label('Seccion')
                                                             ->relationship('section', 'name') // Adjust according to your Section model
                                                             ->options(function (callable $get) {
                                                                 // Obtén el grade_id seleccionado
@@ -108,7 +117,7 @@ class AcademicYearResource extends Resource
                                                         Select::make('main_teacher_id')
                                                             ->relationship('Teacher' , 'first_name')
                                                             ->fixIndistinctState()
-                                                            ->label('Main Teacher'),
+                                                            ->label('Profesor Tutor'),
 
                                                     ])
                                                     ->grid(2)
@@ -144,10 +153,10 @@ class AcademicYearResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('short_name'),
-                TextColumn::make('start_date'),
-                TextColumn::make('end_date'),
+                TextColumn::make('name')->label('Año Académico'),
+                //TextColumn::make('short_name'),
+                TextColumn::make('start_date')->label('Fecha Inicio'),
+                TextColumn::make('end_date')->label('Fecha Fin'),
             ])
             ->filters([
                 //

@@ -30,4 +30,5 @@ class Teacher extends Model
     {
         return $this->hasMany(GradeSection::class);
     }
+
 }

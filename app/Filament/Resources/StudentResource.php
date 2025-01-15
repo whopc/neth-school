@@ -37,27 +37,32 @@ use App\Models\AcademicGrade;
 use App\Models\AcademicLevel;
 use App\Models\GradeSection;
 
+
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'fas-user-graduate';
 
-    protected static ?string $navigationGroup = 'Academic Community';
+    protected static ?string $navigationLabel = 'Estudiantes';
+    protected static ?string $navigationGroup = 'Comunidad Académica';
+
+    protected static ?string $pluralModelLabel = 'Estudiantes';
+    protected static ?string $modelLabel = 'Estudiante';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Wizard::make([
-                    Forms\Components\Wizard\Step::make('Student Information')
+                    Forms\Components\Wizard\Step::make('Información del Estudiante')
                         ->schema([
                             Grid::make()->columns(2)->schema([
 
                                 Hidden::make('enrollment_no'),
                                 Hidden::make('email'),
                                 Select::make('family_id')
-                                    ->label('Family')
+                                    ->label('Familia')
                                     ->relationship('family', 'last_name')
                                     ->searchable()
                                     ->disabled(fn ($record) => $record !== null)
@@ -118,7 +123,7 @@ class StudentResource extends Resource
                                     ->default(now()->year) // Set the default to the current year
                                     ->required(),
                                 Select::make('status')
-                                    ->label('Status')
+                                    ->label('Estatus')
                                     ->options([
                                         'nuevo' => 'Nuevo',
                                         'normal' => 'Normal',
@@ -128,101 +133,116 @@ class StudentResource extends Resource
                                     ->default('nuevo')
                                     ->required(),
                                 TextInput::make('first_last_name')
+                                    ->label('Primer Apellido')
                                     ->debounce(1500)
                                     ->afterStateUpdated(function ($set, $state, $get) {
                                         $set('full_last_name', trim(($get('first_last_name') ?? '') . ' ' . ($get('second_last_name') ?? '')));
                                     })
                                     ->required(),
                                 TextInput::make('second_last_name')
+                                    ->label('Segundo Apellido')
                                     ->debounce(1500)
                                     ->afterStateUpdated(function ($set, $state, $get) {
                                         $set('full_last_name', trim(($get('first_last_name') ?? '') . ' ' . ($get('second_last_name') ?? '')));
                                     }),
                                 TextInput::make('full_last_name')
+                                    ->label('Nombre Completo')
                                     ->afterStateHydrated(function (callable $set, $state, $get) {
                                         // Configura el valor del campo basado en otros campos
                                         $set('full_last_name', trim(($get('first_last_name') ?? '') . ' ' . ($get('second_last_name') ?? '')));
                                     })
                                     ->disabled(),
                                 TextInput::make('first_name')
-//                                    ->afterStateUpdated(function ($set, $state, $get) {
-//                                        $set('full_name', trim(($get('first_name') ?? '') . ' ' . ($get('full_last_name') ?? '')));
-//                                    })
-//                                    ->live()
+                                    ->label('Nombres')
                                     ->required(),
                                 TextInput::make('full_name')
+                                    ->label('Nombre Completo')
                                     ->disabled()
                                     ->hidden()
                                     ->required(),
                                 DatePicker::make('dob')
-                                    ->label('Date of Birth')
+                                    ->label('Fecha de Nacimiento')
                                     ->required(),
                                 Select::make('gender')
+                                    ->label('Genero')
                                     ->options([
-                                        'Male' => 'Male',
-                                        'Female' => 'Female',
+                                        'Male' => 'Masculino',
+                                        'Female' => 'Femenino',
                                     ])
                                     ->required(),
                                 TextInput::make('nationality')
+                                    ->label('Nacionalidad')
                                     ->required(),
                                 TextInput::make('place_of_birth')
+                                    ->label('Lugar de Nacimiento')
                                     ->required(),
                                 TextInput::make('phone')
+                                    ->label('Teléfono')
                                     ->required(),
                                 TextInput::make('previous_school')
+                                    ->label('Centro de Procedencia')
                                     ->required(),
 
                             ]),
                         ])
-                        ->description('Enter the basic information and fiscal data about the student.'),
-                    Forms\Components\Wizard\Step::make('Documement and Data Fiscal')
+                        ->description('Información Básica del Estudiante.'),
+                    Forms\Components\Wizard\Step::make('Documentos y Datos Fiscales')
                         ->schema([
-                            Forms\Components\Section::make()->columns(2)
-                                ->schema([
-                                    Select::make('ncf_type')
-                                        ->label('NCF Type')
-                                        ->options([
-                                            'consumidor final' => 'Consumidor Final',
-                                            'credito fiscal' => 'Credito Fiscal',
-                                            'regimen especial' => 'Regimen Especial',
-                                            'gubernamental'    => 'Gubernamental',
-                                        ])
-                                        ->default('consumidor final'),
-                                    TextInput::make('rnc')
-                                        ->label('RNC o Cédula'),
-                                    TextInput::make('company')
-                                        ->label('Company')
-                                        ->columnSpan('full'),
-                                ])
-                                ->columnSpan(2)
-                                ->heading('Datos Fiscales'), // Título visible de la sección
+
                             Forms\Components\Section::make()->columns(2)
                                 ->schema([
                                     FileUpload::make('picture_path')
-                                        ->label('Upload Picture')
+                                        ->label('Foto')
                                         ->image()
                                         ->avatar()
-                                        ->directory('students/pictures'),
+                                        ->directory('students/pictures')
+                                        ->required(),
                                     FileUpload::make('document')
-                                        ->label('Document')
+                                        ->label('Documentos')
                                         ->directory('students/documents'), // Directory where the file will be stored
-                                    Checkbox::make('is_returning')
-                                        ->label('Returning Student')
-                                        ->default(false),
+
                                     Textarea::make('comments')
-                                        ->label('Comments')
-                                        ->placeholder('Enter your comments here...')
+                                        ->label('Comentarios')
+                                        ->placeholder('Entrar los comentarios aquí...')
                                         ->columnSpan(2)
                                         ->rows(4)
                                         ->maxLength(500),
                                 ])
                                 ->columnSpan(2)
-                                ->heading('Foto , Documento y Comentario'),
+                                ->heading('Foto , Documentos y Comentarios'),
+                            Forms\Components\Section::make()->columns(2)
+                                ->schema([
+                                    Select::make('ncf_type')
+                                        ->label('tipo NCF')
+                                        ->options([
+                                            'consumidor final' => 'Consumidor Final',
+                                            'credito fiscal' => 'Crédito Fiscal',
+                                            'regimen especial' => 'Regimen Especial',
+                                            'gubernamental'    => 'Gubernamental',
+                                        ])
+                                        ->reactive()
+                                        ->afterStateUpdated(function ($state, callable $set) {
+                                            if ($state === 'consumidor final') {
+                                                $set('rnc', null); // Limpiar campo RNC
+                                                $set('company', null); // Limpiar campo Razón Social
+                                            }
+                                        })
+                                        ->default('consumidor final'),
+                                    TextInput::make('rnc')
+                                        ->disabled(fn (callable $get) => $get('ncf_type') === 'consumidor final')
+                                        ->label('RNC o Cédula'),
+                                    TextInput::make('company')
+                                        ->disabled(fn (callable $get) => $get('ncf_type') === 'consumidor final')
+                                        ->label('Razón Social')
+                                        ->columnSpan('full'),
+                                ])
+                                ->columnSpan(2)
+                                ->heading('Datos Fiscales'), // Título visible de la sección
                         ])
 
-                        ->description('Provide the document and data fiscal for the student.'),
+                        ->description('Proporcionar datos fiscales del estudiante.'),
 
-                    Forms\Components\Wizard\Step::make('Student Health')
+                    Forms\Components\Wizard\Step::make('Salud del Estudiante')
                         ->schema([
                             Grid::make()->columns(2)->schema([
                             Forms\Components\TextInput::make('activity')
@@ -240,15 +260,15 @@ class StudentResource extends Resource
                             Forms\Components\TextInput::make('accidents')
                                 ->label('Accidents'),
                             Forms\Components\TextInput::make('doctor')
-                                ->label('Student Doctor'),
+                                ->label('Medico del estudiante'),
                             Forms\Components\TextInput::make('clinic')
-                                ->label('Doctor Clinic'),
+                                ->label('Centro de salud'),
                             Forms\Components\TextInput::make('phone_no')
-                                ->label('Doctor Phone Number'),
+                                ->label('Telefono del Doctor'),
                             Forms\Components\TextInput::make('vaccinations')
-                                ->label('Vaccinations'),
+                                ->label('Vacunaciones'),
                             Forms\Components\Select::make('blood_type')
-                                ->label('Blood Type')
+                                ->label('Tipo de Sangre')
                                 ->options([
                                     'A+' => 'A+',
                                     'A-' => 'A-',
@@ -259,14 +279,17 @@ class StudentResource extends Resource
                                     'O+' => 'O+',
                                     'O-' => 'O-',
                                 ])
+
                         ])
-                        //->description('Provide the health details for the student.'),
-                ]),
-                    Forms\Components\Wizard\Step::make('Academic Information')
+                               ])
+                                ->description('Proporcionar los detalles de salud del estudiante.'),
+
+
+                    Forms\Components\Wizard\Step::make('Información Académica')
                         ->schema([
                             Grid::make()->columns(2)->schema([
                                 Select::make('student_year.academic_year_id')
-                                    ->label('Academic Year')
+                                    ->label('Año Academico')
                                     ->options(function () {
                                         return AcademicYear::pluck('name', 'id')->toArray();
                                     })
@@ -275,7 +298,7 @@ class StudentResource extends Resource
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 Select::make('student_year.level_id')
-                                    ->label('Level')
+                                    ->label('Nivel')
                                     ->options(function (callable $get) {
                                         $academicYearId = $get('student_year.academic_year_id');
                                         if (!$academicYearId) return [];
@@ -290,7 +313,7 @@ class StudentResource extends Resource
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 Select::make('student_year.grade_id')
-                                    ->label('Grade')
+                                    ->label('Grado')
                                     ->options(function (callable $get) {
                                         $levelId = $get('student_year.level_id');
                                         if (!$levelId) return [];
@@ -307,7 +330,7 @@ class StudentResource extends Resource
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 Select::make('student_year.section_id')
-                                    ->label('Section')
+                                    ->label('Sección')
                                     ->options(function (callable $get) {
                                         $gradeId = $get('student_year.grade_id');
                                         if (!$gradeId) return [];
@@ -320,54 +343,59 @@ class StudentResource extends Resource
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 TextInput::make('student_year.classroom')
-                                    ->label('Classroom')
+                                    ->label('Aula')
+                                    ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+                                TextInput::make('minerd_id')
+                                    ->label('Código Minerd')
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 TextInput::make('student_year.order_no')
-                                    ->label('Order No')
+                                    ->label('Número de orden')
                                     ->numeric()
                                     ->required()
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 TextInput::make('student_year.registration_discount')
-                                    ->label('Registration Discount')
+                                    ->label('Descuento de Inscripción')
                                     ->numeric()
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 Radio::make('student_year.registration_discount_type')
-                                    ->label('Registration Discount Type')
+                                    ->label('Tipo De Descuento')
                                     ->options([
-                                        'percentage' => 'Percentage',
-                                        'fixed' => 'Fixed',
+                                        'percentage' => 'Porciento',
+                                        'fixed' => 'Fijo',
                                     ])
                                     ->default('percentage')
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 TextInput::make('student_year.monthly_discount')
-                                    ->label('Monthly Discount')
+                                    ->label('Descuento en Cuotas')
                                     ->numeric()
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 Radio::make('student_year.monthly_discount_type')
-                                    ->label('Monthly Discount Type')
+                                    ->label('Tipo de Descuento')
                                     ->options([
-                                        'percentage' => 'Percentage',
-                                        'fixed' => 'Fixed',
+                                        'percentage' => 'Porciento',
+                                        'fixed' => 'Fijo',
                                     ])
                                     ->default('percentage')
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 Textarea::make('student_year.notes')
-                                    ->label('Notes')
+                                    ->label('Notas')
                                     ->columnSpan(2)
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
                             ]),
                         ])
+                        ->description('Proporcionar los detalles Academicos.')
                         ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                         ])
                     ->columnSpan(2) // Ensure the wizard uses full width
                     ->extraAttributes(['style' => 'max-width: 100%;']), // Allow full width
+
             ]);
     }
 
@@ -377,33 +405,33 @@ class StudentResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('family.id')
-                    ->label('Family ID')
+                    ->label('ID Familia')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('enrollment_no')
-                    ->label('Student ID')
+                    ->label('ID Estudiante')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('first_name')
-                    ->label('Fist Name')
+                    ->label('Nombres')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('family.last_name')
-                    ->label('Last Name')
+                    ->label('Apellidos')
                     ->sortable()
                     ->formatStateUsing(fn ($record) => "{$record->first_last_name} {$record->second_last_name}")
                     ->searchable(),
                 TextColumn::make('studentYears.grade.name')
-                    ->label('Grade')
+                    ->label('Grado')
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->grade->name ?? 'N/A'),
 
                 // Mostrar la sección del último registro en StudentYear
                 TextColumn::make('studentYears.section.name')
-                    ->label('Section')
+                    ->label('Sección')
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->section->name ?? 'N/A'),

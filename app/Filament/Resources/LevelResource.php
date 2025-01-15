@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\LevelResource\Pages;
 use App\Filament\Resources\LevelResource\RelationManagers;
+
 use App\Models\Level;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,23 +13,33 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Section;
 
 class LevelResource extends Resource
 {
     protected static ?string $model = Level::class;
-    protected static ?string $navigationGroup = 'Academic Structure';
+    protected static ?string $navigationGroup = 'Estructura Académica';
 
     protected static ?string $navigationIcon = 'fas-cubes';
+
+    protected static ?string $navigationLabel = 'Niveles';
+
+    protected static ?string $pluralModelLabel = 'Niveles';
+    protected static ?string $modelLabel = 'Nivel';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Section::make()->schema([
                 Forms\Components\TextInput::make('name')
+                    ->label('Nombre')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('order')
+                    ->label('Orden')
                     ->numeric(),
+                    ])
             ]);
     }
 
@@ -37,15 +48,19 @@ class LevelResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Nombre')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('order')
-                    ->numeric()
+                    Tables\Columns\TextColumn::make('order')
+                        ->label('Orden')
+                        ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Creado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Modificado')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

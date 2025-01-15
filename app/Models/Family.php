@@ -39,4 +39,6 @@ class Family extends Model
     {
         return $this->hasMany(Student::class, 'family_id');
     }
+
+
 }

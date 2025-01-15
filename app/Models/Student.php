@@ -10,6 +10,7 @@ class Student extends Model
     use HasFactory;
     protected $fillable = [
         'family_id',
+        'minerd_id',
         'email',
         'admission_date',
         'enrollment_year',
@@ -87,4 +88,5 @@ class Student extends Model
 
         return "{$year}{$paddedUniqueId}"; // Format: 2024001
     }
+
 }

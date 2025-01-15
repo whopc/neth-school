@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('place_of_birth');
             $table->date('dob');
             $table->enum('gender', ['Female', 'Male']);
+            $table->string('minerd_id')->nullable();
             $table->string('nationality');
             $table->string('phone')->nullable();
             $table->string('previous_school');
@@ -31,7 +32,7 @@ return new class extends Migration
             $table->string('comments')->nullable();
             $table->enum('status', ['nuevo', 'normal','suspendido', 'retirado']);
             $table->string('document')->nullable();
-            $table->boolean('is_returning');
+            $table->boolean('is_returning')->nullable();
             $table->boolean('is_enrolled');// medical
             $table->string('activity')->nullable();
             $table->string('skill')->nullable();

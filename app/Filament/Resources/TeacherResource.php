@@ -19,31 +19,46 @@ class TeacherResource extends Resource
 
     protected static ?string $navigationIcon = 'fas-chalkboard-teacher';
 
-    protected static ?string $navigationGroup = 'Academic Community';
+    protected static ?string $navigationLabel = 'Docentes';
+    protected static ?string $navigationGroup = 'Comunidad Académica';
+
+    protected static ?string $pluralModelLabel = 'Docentes';
+    protected static ?string $modelLabel = 'Docente';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('first_name')
+                    ->label('Nombres')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('last_name')
+                    ->label('Apellidos')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('id_number')
+                    ->label('Cédula')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('dob')
+                    ->label('Fecha de Nacimiento')
                     ->required(),
-                Forms\Components\TextInput::make('gender')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Select::make('gender')
+                    ->label('Genero')
+            ->options([ 'masculino' => 'Masculino', 'femenino' => 'Femenino' ,
+               ]),
                 Forms\Components\TextInput::make('address')
+                    ->label('Dirección')
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('phone')
+                ->label('Teléfono')
                     ->tel()
+                    ->mask('(999) 999-9999') // Aplicar la máscara fija para formato de teléfono
+                    ->maxLength(14) // Longitud máxima incluyendo paréntesis, espacio y guión
+                    ->minLength(14) // Longitud mínima requerida
+                    ->afterStateUpdated(fn($state, callable $set) => $set('phone', $state))
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
@@ -51,17 +66,23 @@ class TeacherResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('specialization')
+                    ->label('Especialidad')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('academic_degree')
+                    ->label('Grado Academico')
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('hire_date')
+                    ->label('Fecha de Ingreso')
                     ->required(),
                 Forms\Components\Toggle::make('status')
+                    ->label('Estado')
                     ->required(),
-                Forms\Components\TextInput::make('contract_type')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Select::make('contract_type')
+                    ->label('Genero')
+                    ->options([ 'minerd' => 'MINERD', 'privado' => 'Privado' ,
+                    ]),
                 Forms\Components\TextInput::make('salary')
+                    ->label('Salario')
                     ->numeric(),
             ]);
     }
@@ -71,29 +92,24 @@ class TeacherResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
+                    ->label('Nombres')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('id_number')
+                    ->label('Apellidos')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('dob')
+                    ->label('Fecha de Nacimiento')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('gender')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('address')
+                    ->label('Genero')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
+                    ->label('Teléfono')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->label('Email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('specialization')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('academic_degree')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('hire_date')
-                    ->date()
-                    ->sortable(),
                 Tables\Columns\IconColumn::make('status')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('contract_type')

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('second_last_name')->nullable();
             $table->enum('id_type', [ 'national_id', 'passport']); // Ajustado
             $table->string('id_number')->unique(); // Ajustado
-            $table->string('email')->unique()->nullable(); // Ajustado
+            $table->string('email')->nullable(); // Ajustado
             $table->string('address')->nullable();
             $table->string('home_phone')->nullable();
             $table->string('mobile_phone')->nullable();

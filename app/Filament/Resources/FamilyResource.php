@@ -18,13 +18,17 @@ use Filament\Tables\Actions;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Validation\Rule;
 use App\Filament\Resources\FamilyResource\RelationManagers;
+
 class FamilyResource extends Resource
 {
     protected static ?string $model = Family::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Familias';
-    protected static ?string $navigationGroup = 'Academic Community';
+    protected static ?string $navigationGroup = 'Comunidad Académica';
+
+    protected static ?string $pluralModelLabel = 'Familias';
+    protected static ?string $modelLabel = 'Familia';
 
     public static function form(Form $form): Form
     {
@@ -35,13 +39,13 @@ class FamilyResource extends Resource
                         TextInput::make('id')
                             ->label('ID')
                             ->disabled() // Deshabilitado para solo lectura
-                            ->hidden(fn ($record) => is_null($record)) // Ocultar en la creación de registros nuevos
-                            ->afterStateHydrated(fn ($component, $state) => $state = $component->getRecord()?->id),
+                            ->hidden(fn($record) => is_null($record)) // Ocultar en la creación de registros nuevos
+                            ->afterStateHydrated(fn($component, $state) => $state = $component->getRecord()?->id),
                         Grid::make(2)
                             ->schema([
                                 // Columna 1: Campos del father
                                 Select::make('father_id')
-                                    ->label('Father')
+                                    ->label('Padre')
                                     ->relationship('father', 'name')
                                     ->searchable()
                                     ->getSearchResultsUsing(function (string $searchQuery) {
@@ -61,19 +65,22 @@ class FamilyResource extends Resource
                                         Grid::make(2)
                                             ->schema([
                                                 TextInput::make('name')
+                                                    ->label('Nombre')
                                                     ->required()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('name', strtoupper($state))),
                                                 TextInput::make('first_last_name')
+                                                    ->label('Primer Apellido')
                                                     ->required()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('first_last_name', strtoupper($state))),
                                                 TextInput::make('second_last_name')
+                                                    ->label('Segundo Apellido')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('second_last_name', strtoupper($state))),
                                                 Select::make('id_type')
-                                                    ->label('Id Type')
+                                                    ->label('Tipo de Identificación')
                                                     ->options([
-                                                        'national_id' => 'National id',
-                                                        'passport' => 'Passaport',
+                                                        'national_id' => 'Cédula',
+                                                        'passport' => 'Pasaporte',
                                                     ])
                                                     ->default('national_id')
                                                     ->required()
@@ -83,34 +90,44 @@ class FamilyResource extends Resource
                                                     ->required()
                                                     ->rules(['unique:progenitors,id_number'])
                                                     ->placeholder('Please enter your identification number')
-                                                    ->mask(fn (callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
-                                                    ->maxLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
-                                                    ->minLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->mask(fn(callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
+                                                    ->maxLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->minLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('id_number', strtoupper($state))),
                                                 TextInput::make('home_phone')
-                                                    ->nullable()
-                                                    ->afterStateUpdated(fn($state, callable $set) => $set('home_phone', strtoupper($state))),
+                                                    ->label('Numero local')
+                                                    ->tel()
+                                                    ->mask('(999) 999-9999') // Aplicar la máscara fija para formato de teléfono
+                                                    ->maxLength(14) // Longitud máxima incluyendo paréntesis, espacio y guión
+                                                    ->minLength(14) // Longitud mínima requerida
+                                                    ->afterStateUpdated(fn($state, callable $set) => $set('home_phone', $state)),
                                                 TextInput::make('mobile_phone')
+                                                    ->label('Numero Mobil')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('mobile_phone', strtoupper($state))),
                                                 TextInput::make('place_of_work')
+                                                    ->label('Lugar de Trabajo')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('place_of_work', strtoupper($state))),
                                                 TextInput::make('work_phone')
+                                                    ->label('Numero de Trabajo')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('work_phone', strtoupper($state))),
                                                 TextInput::make('email')
+                                                    ->label('Correo')
                                                     ->email()
                                                     ->nullable()
                                                     ->rules(['email'])
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('email', strtoupper($state))),
                                                 TextInput::make('address')
+                                                    ->label('Dirección')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('address', strtoupper($state))),
                                                 Select::make('role')
-                                                    ->options(['father' => 'Father'])
+                                                    ->label('Rol')
+                                                    ->options(['father' => 'Padre'])
                                                     ->default('father')
-                                                    ->hidden(fn () => true)
+                                                    ->hidden(fn() => true)
                                                     ->columnSpan(2),
                                             ]),
                                     ])
@@ -118,70 +135,84 @@ class FamilyResource extends Resource
                                         Grid::make(2)
                                             ->schema([
                                                 TextInput::make('name')
+                                                    ->label('Nombre')
                                                     ->required()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('name', strtoupper($state))),
                                                 TextInput::make('first_last_name')
+                                                    ->label('Primer Apellido')
                                                     ->required()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('first_last_name', strtoupper($state))),
                                                 TextInput::make('second_last_name')
+                                                    ->label('Segundo Apellido')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('second_last_name', strtoupper($state))),
                                                 Select::make('id_type')
+                                                    ->label('Tipo de Identificación')
                                                     ->label('Tipo de Documento')
                                                     ->options([
-                                                        'national_id' => 'National Id',
-                                                        'passport' => 'passport',
+                                                        'national_id' => 'Cédula',
+                                                        'passport' => 'Pasaporte',
                                                     ])
                                                     ->required()
                                                     ->reactive(),
                                                 TextInput::make('id_number')
-                                                    ->label('Id Number')
+                                                    ->label('Numero de Identificación')
                                                     ->required()
                                                     ->rules([
                                                         fn($component) => Rule::unique('progenitors', 'id_number')->ignore($component->getRecord()?->id)
                                                     ])
-                                                    ->placeholder('Please enter your identification number')
-                                                    ->mask(fn (callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
-                                                    ->maxLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
-                                                    ->minLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->placeholder('Por Favor Digite el Numero de Identificación')
+                                                    ->mask(fn(callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
+                                                    ->maxLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->minLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('id_number', strtoupper($state))),
                                                 TextInput::make('home_phone')
-                                                    ->nullable()
-                                                    ->afterStateUpdated(fn($state, callable $set) => $set('home_phone', strtoupper($state))),
+                                                    ->label('Numero local')
+                                                    ->tel()
+                                                    ->mask('(999) 999-9999') // Aplicar la máscara fija para formato de teléfono
+                                                    ->maxLength(14) // Longitud máxima incluyendo paréntesis, espacio y guión
+                                                    ->minLength(14) // Longitud mínima requerida
+                                                    ->afterStateUpdated(fn($state, callable $set) => $set('home_phone', $state)),
                                                 TextInput::make('mobile_phone')
+                                                    ->label('Numero Mobil')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('mobile_phone', strtoupper($state))),
                                                 TextInput::make('place_of_work')
+                                                    ->label('Lugar de Trabajo')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('place_of_work', strtoupper($state))),
                                                 TextInput::make('work_phone')
+                                                    ->label('Numero de Trabajo')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('work_phone', strtoupper($state))),
                                                 TextInput::make('email')
+                                                    ->label('Correo')
                                                     ->email()
                                                     ->nullable()
                                                     ->rules(['email'])
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('email', strtoupper($state))),
                                                 TextInput::make('address')
+                                                    ->label('Dirección')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('address', strtoupper($state))),
                                                 Select::make('role')
+                                                    ->label('Rol')
                                                     ->options(['father' => 'Father'])
                                                     ->default('father')
-                                                    ->hidden(fn () => true)
+                                                    ->hidden(fn() => true)
                                                     ->columnSpan(2),
                                             ]),
                                     ])
                                     ->reactive()
-                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? ''))
-                                    ->afterStateUpdated(fn($set,$state, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? ''))
-                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? ''))
                                     ->afterStateUpdated(fn($set, $state, $get) => $set('nombre_padre', Progenitor::find($get('father_id'))?->name ?? ''))
                                     ->afterStateUpdated(fn(callable $set, $state, $get) => $set('last_name', trim((Progenitor::find($get('father_id'))?->first_last_name ?? '') . ' ' . (Progenitor::find($get('mother_id'))?->first_last_name ?? '')))),
 
                                 // Columna 2: Campos de la mother
                                 Select::make('mother_id')
-                                    ->label('Mother')
+                                    ->label('Madre')
                                     ->relationship('mother', 'name')
                                     ->searchable()
                                     ->required()
@@ -202,46 +233,55 @@ class FamilyResource extends Resource
                                         Grid::make(2)
                                             ->schema([
                                                 TextInput::make('name')
+                                                    ->label('Nombre')
                                                     ->required()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('name', strtoupper($state))),
                                                 TextInput::make('first_last_name')
+                                                    ->label('Primer Apellido')
                                                     ->required()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('first_last_name', strtoupper($state))),
                                                 TextInput::make('second_last_name')
+                                                    ->label('Segundo Apellido')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('second_last_name', strtoupper($state))),
                                                 Select::make('id_type')
-                                                    ->label('Id Type')
+                                                    ->label('Tipo de Identificacíón')
                                                     ->options([
-                                                        'national_id' => 'National Id',
-                                                        'passport' => 'passport',
+                                                        'national_id' => 'Cédula',
+                                                        'passport' => 'Pasaporte',
                                                     ])
                                                     ->default('national_id')
                                                     ->required()
                                                     ->reactive()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('id_number', '')),
                                                 TextInput::make('id_number')
-                                                    ->label('Identification Number')
+                                                    ->label('Numero de Identificación')
                                                     ->required()
                                                     ->rules(['unique:progenitors,id_number'])
                                                     ->placeholder('Please enter your identification number')
-                                                    ->mask(fn (callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
-                                                    ->maxLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
-                                                    ->minLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->mask(fn(callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
+                                                    ->maxLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->minLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('id_number', strtoupper($state))),
                                                 TextInput::make('home_phone')
+                                                    ->label('Teléfono Local')
+                                                    ->tel()
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('home_phone', strtoupper($state))),
                                                 TextInput::make('mobile_phone')
+                                                    ->label('Celular')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('mobile_phone', strtoupper($state))),
                                                 TextInput::make('place_of_work')
+                                                    ->label('Lugar de Trabajo')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('place_of_work', strtoupper($state))),
                                                 TextInput::make('work_phone')
+                                                    ->label('Teléfono de Trabajo')
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('work_phone', strtoupper($state))),
                                                 TextInput::make('email')
+                                                    ->label('Correo')
                                                     ->email()
                                                     ->nullable()
                                                     ->rules(['email'])
@@ -250,7 +290,7 @@ class FamilyResource extends Resource
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('address', strtoupper($state))),
                                                 Select::make('role')
-                                                    ->options(['father' => 'Father','mother' => 'Mother'])
+                                                    ->options(['father' => 'Father', 'mother' => 'Mother'])
                                                     ->default('mother')
                                                     ->columnSpan(2),
                                             ]),
@@ -283,9 +323,9 @@ class FamilyResource extends Resource
                                                         fn($component) => Rule::unique('progenitors', 'id_number')->ignore($component->getRecord()?->id)
                                                     ])
                                                     ->placeholder('Please enter your identification number')
-                                                    ->mask(fn (callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
-                                                    ->maxLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
-                                                    ->minLength(fn (callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->mask(fn(callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
+                                                    ->maxLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
+                                                    ->minLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('id_number', strtoupper($state))),
                                                 TextInput::make('home_phone')
                                                     ->nullable()
@@ -308,7 +348,7 @@ class FamilyResource extends Resource
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('address', strtoupper($state))),
                                                 Select::make('role')
-                                                    ->options(['father' => 'Father','mother' => 'Mother'])
+                                                    ->options(['father' => 'Father', 'mother' => 'Mother'])
                                                     ->default('mother')
                                                     ->columnSpan(2),
                                             ]),
@@ -331,15 +371,15 @@ class FamilyResource extends Resource
                                         };
                                     })
                                     ->reactive()
-                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? ''))
-                                    ->afterStateUpdated(fn($set,$state, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? ''))
-                                    ->afterStateUpdated(fn($set,$state, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('apellido_madre', Progenitor::find($get('mother_id'))?->first_last_name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('nombre_madre', Progenitor::find($get('mother_id'))?->name ?? ''))
+                                    ->afterStateUpdated(fn($set, $state, $get) => $set('apellido_padre', Progenitor::find($get('father_id'))?->first_last_name ?? ''))
                                     ->afterStateUpdated(fn($set, $state, $get) => $set('nombre_padre', Progenitor::find($get('father_id'))?->name ?? ''))
                                     ->afterStateUpdated(fn(callable $set, $state, $get) => $set('last_name', trim((Progenitor::find($get('father_id'))?->first_last_name ?? '') . ' ' . (Progenitor::find($get('mother_id'))?->first_last_name ?? '')))),
                             ]),
 
                         TextInput::make('last_name')
-                            ->label('Family')
+                            ->label('Apellidos Familia')
                             ->required()
                             ->afterStateUpdated(fn($state, callable $set) => $set('last_name', strtoupper($state)))
                             ->reactive(),
@@ -376,33 +416,33 @@ class FamilyResource extends Resource
 
                                 TextInput::make('t_name')
                                     ->label('name del Tutor')
-                                    ->visible(fn ($get) => $get('tutor_enabled'))
+                                    ->visible(fn($get) => $get('tutor_enabled'))
                                     ->nullable()
                                     ->afterStateUpdated(fn($state, callable $set) => $set('t_name', strtoupper($state))),
 
                                 TextInput::make('t_last_name')
                                     ->label('last_name del Tutor')
-                                    ->visible(fn ($get) => $get('tutor_enabled'))
+                                    ->visible(fn($get) => $get('tutor_enabled'))
                                     ->nullable()
                                     ->afterStateUpdated(fn($state, callable $set) => $set('t_last_name', strtoupper($state))),
 
                                 TextInput::make('t_address')
                                     ->label('Dirección del Tutor')
-                                    ->visible(fn ($get) => $get('tutor_enabled'))
+                                    ->visible(fn($get) => $get('tutor_enabled'))
                                     ->nullable()
                                     ->afterStateUpdated(fn($state, callable $set) => $set('t_address', strtoupper($state))),
 
                                 TextInput::make('t_telephone')
                                     ->label('Teléfono del Tutor')
-                                    ->visible(fn ($get) => $get('tutor_enabled'))
+                                    ->visible(fn($get) => $get('tutor_enabled'))
                                     ->nullable()
                                     ->afterStateUpdated(fn($state, callable $set) => $set('t_telephone', strtoupper($state))),
 
                                 TextInput::make('kinship')
-                                    ->label('Parentezco del Tutor')
-                                    ->visible(fn ($get) => $get('kinship'))
+                                    ->label('Parentesco del Tutor')
+                                    ->visible(fn($get) => $get('kinship'))
                                     ->nullable()
-                                    ->afterStateUpdated(fn($state, callable $set) => $set('parentezco', strtoupper($state))),
+                                    ->afterStateUpdated(fn($state, callable $set) => $set('kinship', strtoupper($state))),
                             ])
                             ->columns(2),
                     ])
@@ -419,17 +459,17 @@ class FamilyResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('last_name')
-                    ->label('last_name')
+                    ->label('Apellidos')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('father.name')
-                    ->label('Father')
+                    ->label('Padre')
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('mother.name')
-                    ->label('Mother')
+                    ->label('Madre')
                     ->sortable()
                     ->searchable(),
             ])
