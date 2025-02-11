@@ -195,8 +195,7 @@ class StudentResource extends Resource
                                         ->label('Foto')
                                         ->image()
                                         ->avatar()
-                                        ->directory('students/pictures')
-                                        ->required(),
+                                        ->directory('students/pictures'),
                                     FileUpload::make('document')
                                         ->label('Documentos')
                                         ->directory('students/documents'), // Directory where the file will be stored
