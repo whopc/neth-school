@@ -24,6 +24,7 @@ class Teacher extends Model
         'status',
         'contract_type',
         'salary',
+        'user_email',
     ];
 
     public function GradeSections()

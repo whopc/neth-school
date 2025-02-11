@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 use App\Models\Grade;
 use App\Models\Level;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -41,10 +42,10 @@ class AcademicYearResource extends Resource
 
 
     // Override the label for the resource
-    public static function getModelLabel(): string
-    {
-        return 'Academic Year';
-    }
+//    public static function getModelLabel(): string
+//    {
+//        return 'Academic Year';
+//    }
 
     public static function form(Form $form): Form
     {
@@ -52,12 +53,18 @@ class AcademicYearResource extends Resource
             ->schema([
                 Forms\Components\Tabs::make('tabs')
                     ->tabs([
-                        Tab::make('Academic Year')->label('Año Académico')
+                        Tab::make('Año Académico')->label('Año Académico')
                             ->schema([
+                                Grid::make()->columns(2)->schema([
                                 TextInput::make('name')->required()->label('Nombre'),
-                                TextInput::make('short_name')->required()->label('Nombre Corto'),
-                                DatePicker::make('start_date')->required()->label('Fecha Inicio'),
-                                DatePicker::make('end_date')->required()->label('Fecha Fin'),
+                                    TextInput::make('short_name')->required()->label('Nombre Corto'),
+                                    DatePicker::make('start_date')->required()->label('Fecha Inicio'),
+                                    DatePicker::make('end_date')->required()->label('Fecha Fin'),]),
+                                Forms\Components\Toggle::make('status')
+                                    ->label('Estado')
+                                    ->default(0)
+                                    ->required(),
+
                             ]),
 
                         Tab::make('Academic Levels')->label("Niveles")
@@ -72,36 +79,88 @@ class AcademicYearResource extends Resource
                                             ->required()
                                             ->reactive(),
 
+
+
                                         Forms\Components\TextInput::make('admission_fees')
                                             ->label('Cuota de Inscripción')
-                                            ->required()
-                                            ->numeric(),
+                                            ->numeric()
+                                            ->reactive()
+                                            ->disabled(fn (callable $get) => !$get('cuota')) // Deshabilita cuando 'cuota' es false (0)
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                                if (!$get('cuota')) {
+                                                    $set('admission_fees', null);
+                                                }
+                                            }),
+
                                         Forms\Components\TextInput::make('materials_fees')
                                             ->label('Cuota de Materiales')
-                                            ->numeric(),
+                                            ->numeric()
+                                            ->reactive()
+                                            ->disabled(fn (callable $get) => !$get('cuota')) // Deshabilita cuando 'cuota' es false (0)
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                                if (!$get('cuota')) {
+                                                    $set('materials_fees', null);
+                                                }
+                                            }),
+                                        Forms\Components\Toggle::make('cuota')
+                                            ->label('Cuota')
+                                            ->reactive()
+                                            ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                                if (!$state) {
+                                                    // Limpiar los valores dentro de este Repeater
+                                                    $set('admission_fees', null);
+                                                    $set('materials_fees', null);
+
+                                                    // Obtener los valores actuales del Repeater 'academicGrades'
+                                                    $grades = $get('academicGrades') ?? [];
+
+                                                    // Limpiar 'fee_cuota' en cada grado dentro del repeater
+                                                    foreach ($grades as $index => $grade) {
+                                                        $grades[$index]['fee_cuota'] = null;
+                                                    }
+
+                                                    // Guardar los valores actualizados en 'academicGrades'
+                                                    $set('academicGrades', $grades);
+                                                }
+                                            })
+                                            ->default(true)
+                                            ->required(),
 
                                         Forms\Components\Repeater::make('academicGrades')->label('Grados')
                                             ->relationship('academicGrades')
                                             ->schema([
                                                 Forms\Components\Select::make('grade_id')
                                                     ->label('Grado')
-                                                    ->relationship('grade', 'name'),// Adjust according to your Grade model
+                                                    ->relationship('grade', 'name', function ($query) {
+                                                        $query->orderBy('order'); // Ordena por el campo 'order' en el modelo Grade
+                                                    })
+                                            ->afterStateUpdated(function ($state, callable $set) {
+                                                // Cuando cambia el grado, limpiar la sección seleccionada
+                                                $set('gradeSections', []);
+                                            }),
 
 
                                                 Forms\Components\TextInput::make('fee_cuota')
                                                     ->label('Cuota Mensual')
                                                     ->required()
+                                                    ->reactive()
+                                                    ->disabled(fn (callable $get) => !$get('../../cuota')) // Busca el `cuota` del Repeater superior
+                                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                                        if (!$get('../../cuota')) { // Busca `cuota` correctamente en el repeater superior
+                                                            $set('fee_cuota', null);
+                                                        }
+                                                    })
                                                     ->numeric(),
 
                                                 Forms\Components\Checkbox::make('platform')
-                                                    ->label('Progentis'),
+                                                    ->label('Progrentis'),
 
                                                 Forms\Components\Repeater::make('gradeSections')->label('Secciones')
                                                     ->columns(2)
                                                     ->relationship('gradeSections')
                                                     ->schema([
                                                         Select::make('section_id')
-                                                            ->label('Seccion')
+                                                            ->label('Sección')
                                                             ->relationship('section', 'name') // Adjust according to your Section model
                                                             ->options(function (callable $get) {
                                                                 // Obtén el grade_id seleccionado
@@ -113,6 +172,7 @@ class AcademicYearResource extends Resource
                                                                     ->toArray(); // Convierte a un array para que Filament lo pueda utilizar
                                                             })
                                                             ->fixIndistinctState()
+                                                            ->reactive()
                                                             ->required(),
                                                         Select::make('main_teacher_id')
                                                             ->relationship('Teacher' , 'first_name')

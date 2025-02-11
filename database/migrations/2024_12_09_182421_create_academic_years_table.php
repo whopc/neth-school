@@ -17,6 +17,7 @@ return new class extends Migration
                 $table->string('short_name'); //  Short name for the academic year “2024”
                 $table->date('start_date'); // Column for start date
                 $table->date('end_date'); // Column for end date
+                $table->boolean('status');
                 $table->timestamps(); // Creates created_at and updated_at columns
         });
     }

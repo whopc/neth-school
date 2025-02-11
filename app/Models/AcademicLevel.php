@@ -17,6 +17,10 @@ class AcademicLevel extends Model
         'level_id',
         'admission_fees',
         'materials_fees',
+        'cuota',
+    ];
+    protected $casts = [
+        'cuota' => 'boolean',
     ];
 
     public function academicYear()

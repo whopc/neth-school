@@ -62,14 +62,18 @@ class TeacherResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
+                    ->label('Correo Personal')
                     ->email()
-                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('user_email')
+                    ->label('Correo Institucional')
+                    ->email()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('specialization')
                     ->label('Especialidad')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('academic_degree')
-                    ->label('Grado Academico')
+                    ->label('Grado Académico')
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('hire_date')
                     ->label('Fecha de Ingreso')

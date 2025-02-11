@@ -14,6 +14,7 @@ class AcademicYear extends Model
         'short_name',
         'start_date',
         'end_date',
+        'status',
     ];
 
     public function academicLevels()

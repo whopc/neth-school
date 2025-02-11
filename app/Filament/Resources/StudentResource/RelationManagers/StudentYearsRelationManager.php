@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Models\AcademicGrade;
-use App\Models\AcademicLevel;
 use App\Models\AcademicYear;
 use App\Models\Section;
 use Filament\Forms;
@@ -105,49 +104,46 @@ class StudentYearsRelationManager extends RelationManager
                         ->required(),
 
                     TextInput::make('classroom')
-                        ->label('Classroom')
+                        ->label('Aula')
                         ->placeholder('Enter the classroom')
                         ->nullable(),
 
                     TextInput::make('order_no')
-                        ->label('Order No')
+                        ->label('Numero de Orden')
                         ->numeric()
                         ->placeholder('Enter the order number')
                         ->required(),
 
                     Textarea::make('notes')
-                        ->label('Notes')
-                        ->placeholder('Enter any notes')
+                        ->label('Notas')
                         ->nullable()
                         ->rows(3)
                         ->columnSpan(2),
 
                     TextInput::make('registration_discount')
-                        ->label('Registration Discount')
+                        ->label('Descuento de Inscripción')
                         ->numeric()
-                        ->placeholder('Enter registration discount')
                         ->nullable(),
 
                     Radio::make('registration_discount_type')
-                        ->label('Registration Discount Type')
+                        ->label('Tipo de Descuento')
                         ->options([
-                            'percentage' => 'Percentage',
-                            'fixed' => 'Fixed',
+                            'percentage' => 'Porciento',
+                            'fixed' => 'Fijo',
                         ])
                         ->default('percentage')
                         ->required(),
 
                     TextInput::make('monthly_discount')
-                        ->label('Monthly Discount')
+                        ->label('Descuento Cuota')
                         ->numeric()
-                        ->placeholder('Enter monthly discount')
                         ->nullable(),
 
                     Radio::make('monthly_discount_type')
-                        ->label('Monthly Discount Type')
+                        ->label('Tipo de Descuento')
                         ->options([
-                            'percentage' => 'Percentage',
-                            'fixed' => 'Fixed',
+                            'percentage' => 'v',
+                            'fixed' => 'Fijo',
                         ])
                         ->default('percentage')
                         ->required(),

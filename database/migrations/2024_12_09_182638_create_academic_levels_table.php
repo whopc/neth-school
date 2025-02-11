@@ -17,7 +17,9 @@ return new class extends Migration
             $table->foreignId('level_id')->constrained('levels')->onDelete('cascade');
             $table->decimal('admission_fees', 8, 2)->nullable(); // Adjust precision/scale as needed
             $table->decimal('materials_fees', 8, 2)->nullable(); // Adjust precision/scale as needed
+            $table->boolean('cuota');//para saber si maneja cuota de inscripción y materiales o no
             $table->timestamps();
+
         });
     }
 
