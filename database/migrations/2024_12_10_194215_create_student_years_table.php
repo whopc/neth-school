@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
             $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
             $table->string('classroom')->nullable();
-            $table->string('order_no')->comment('Número de orden del estudiante en la sección');
+            $table->string('order_no')->comment('Número de orden del estudiante en la sección')->nullable();
             $table->unique(['section_id', 'order_no'], 'unique_section_order');
             $table->string('notes')->nullable();
             $table->decimal('registration_discount', 8, 2)->nullable(); // Descuento para inscripción
