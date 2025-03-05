@@ -59,7 +59,6 @@ class StudentResource extends Resource
                         ->schema([
                             Grid::make()->columns(2)->schema([
 
-                                Hidden::make('enrollment_no'),
                                 Hidden::make('email'),
                                 Select::make('family_id')
                                     ->label('Familia')
@@ -112,6 +111,10 @@ class StudentResource extends Resource
                                     ->afterStateUpdated(function ($set, $state, $get) {
                                         $set('full_last_name', trim(($get('first_last_name') ?? '') . ' ' . ($get('second_last_name') ?? '')));
                                     }),
+                                TextInput::make('enrollment_no')
+                                    ->label('Matricula')
+                                    ->numeric()
+                                    ->required(),
 
                                 Hidden::make('admission_date')
                                     ->default(now()) // Set the default to the current date
@@ -177,11 +180,9 @@ class StudentResource extends Resource
                                     ->label('Lugar de Nacimiento')
                                     ->required(),
                                 TextInput::make('phone')
-                                    ->label('Teléfono')
-                                    ->required(),
+                                    ->label('Teléfono'),
                                 TextInput::make('previous_school')
-                                    ->label('Centro de Procedencia')
-                                    ->required(),
+                                    ->label('Centro de Procedencia'),
 
                             ]),
                         ])
@@ -351,7 +352,6 @@ class StudentResource extends Resource
                                 TextInput::make('student_year.order_no')
                                     ->label('Número de orden')
                                     ->numeric()
-                                    ->required()
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
                                 TextInput::make('student_year.registration_discount')
