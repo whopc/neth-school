@@ -24,6 +24,31 @@ class Family extends Model
         'kinship',
     ];
 
+    protected static function booted()
+    {
+        static::created(function ($family) {
+            $mother = $family->mother;
+
+            if ($mother && $mother->id_number) {
+                // Eliminar guiones del id_number
+                $cleanIdNumber = str_replace('-', '', $mother->id_number);
+
+                // Crear el usuario
+                $user = \App\Models\User::create([
+                    'role_id'           => Role::FAMILY, // Rol Family
+                    'name'              => $family->last_name,
+                    'email'             => 'fam' . $family->id . '@cefodipf.edu.do',
+                    'password'          => bcrypt($cleanIdNumber),
+                    'email_verified_at' => now(),
+                ]);
+
+                // Asignar el ID del usuario recién creado a la familia
+                $family->user_id = $user->id;
+                $family->save();
+            }
+        });
+    }
+
     // Relación con el progenitor father
     public function father()
     {
@@ -38,6 +63,10 @@ class Family extends Model
     public function students()
     {
         return $this->hasMany(Student::class, 'family_id');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
 

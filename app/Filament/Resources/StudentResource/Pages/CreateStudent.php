@@ -14,7 +14,7 @@ class CreateStudent extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-       // $data['enrollment_no'] = Student::generateEnrollmentNumber();
+        $data['enrollment_no'] = Student::generateEnrollmentNumber();
         $data['email'] = "{$data['enrollment_no']}@cefodipf.edu.do"; // Set email using enrollment_no
         $studentYearData = $data['student_year'] ?? null;
         unset($data['student_year']);

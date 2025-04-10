@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Auth\Authenticatable;
 
-class Teacher extends Model
+class Teacher extends Model implements AuthenticatableContract
 {
-    use HasFactory;
+    use HasFactory, Authenticatable;
 
     protected $fillable = [
         'first_name',
@@ -25,11 +28,56 @@ class Teacher extends Model
         'contract_type',
         'salary',
         'user_email',
+        'user_id',
     ];
 
-    public function GradeSections()
+    // Sobrescribimos el método newQuery para filtrar solo los profesores
+//    public function newQuery($excludeDeleted = true): Builder
+//    {
+//        return parent::newQuery($excludeDeleted)
+//            ->whereHas('user', function ($query) {
+//                $query->where('role_id', Role::TEACHER);
+//            });
+//    }
+
+    // Ámbito global para filtrar solo los profesores
+    protected static function booted()
+    {
+//        static::addGlobalScope('teacher-role', function (Builder $builder) {
+//            $builder->whereHas('user', function ($q) {
+//                $q->whereHas('role', function($query) {
+//                    $query->where('id', Role::TEACHER);
+//                });
+//                // O directamente si user tiene un role_id
+//                // $q->where('role_id', Role::TEACHER);
+//            });
+//        });
+
+        // Crear un nuevo usuario al crear un Teacher
+        static::created(function ($teacher) {
+            $user = \App\Models\User::create([
+                'role_id'           => Role::TEACHER, // Asignar el rol de teacher
+                'name'              => $teacher->first_name . ' ' . $teacher->last_name,
+                'email'             => $teacher->user_email,
+                'password'          => bcrypt(str_replace('-', '', $teacher->id_number)), // Cifrar contraseña
+                'email_verified_at' => now(),
+            ]);
+
+            // Asignar el ID del usuario recién creado al Teacher
+            $teacher->user_id = $user->id;
+            $teacher->save();
+        });
+    }
+
+    // Relación con GradeSection
+    public function gradeSections()
     {
         return $this->hasMany(GradeSection::class);
     }
 
+    // Relación con User
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
