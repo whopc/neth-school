@@ -58,6 +58,10 @@ class Student extends Model
     {
         return $this->belongsTo(Family::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function studentYears()
     {
@@ -77,6 +81,22 @@ class Student extends Model
         'is_returning' => 'boolean',
         'is_enrolled' => 'boolean',
     ];
+    protected static function booted()
+    {
+
+        static::created(function ($student) {
+            $user = \App\Models\User::create([
+                'type_id'           => Type::STUDENT, // Rol Teacher
+                'name'              => $student->first_name . ' ' . $student->last_name,
+                'email'             => $student->user_email,
+                'password'          => bcrypt(date('Ymd', strtotime($student->dob))), // AñoMesDía como contraseña
+                'email_verified_at' => now(),
+            ]);
+
+            // Asignar el ID del usuario recién creado al student
+            $student->save();
+        });
+    }
     public static function generateEnrollmentNumber(): string
     {
         $year = date('Y'); // Current year
@@ -84,9 +104,9 @@ class Student extends Model
         $uniqueId = $lastStudent ? $lastStudent->id + 1 : 1; // Generate unique ID
 
         // Pad the unique ID with leading zeros to ensure it's always 3 digits
-        $paddedUniqueId = str_pad($uniqueId, 3, '0', STR_PAD_LEFT);
+        $paddedUniqueId = str_pad($uniqueId, 4, '0', STR_PAD_LEFT);
 
-        return "{$year}{$paddedUniqueId}"; // Format: 2024001
+        return "{$year}{$paddedUniqueId}"; // Format: 20240001
     }
 
 }

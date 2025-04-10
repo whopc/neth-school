@@ -113,8 +113,17 @@ class StudentResource extends Resource
                                     }),
                                 TextInput::make('enrollment_no')
                                     ->label('Matricula')
-                                    ->numeric()
-                                    ->required(),
+                                    ->required()
+//                                    ->afterStateHydrated(function (callable $set, $state, ?\App\Models\Student $record) {
+//                                        // Si no hay registro (creando) y el campo está vacío, generar el enrollment_no
+//                                        if (!$record && empty($state)) {
+//                                            $set('enrollment_no', \App\Models\Student::generateEnrollmentNumber());
+//                                        }
+//                                    })
+//                                    ->disabled()
+// esta comentado hasta que se registren todas las matriculas de los estudiantes viejos ...
+
+                                    ->numeric(),
 
                                 Hidden::make('admission_date')
                                     ->default(now()) // Set the default to the current date
@@ -134,7 +143,8 @@ class StudentResource extends Resource
                                         'retirado' => 'Retirado',
                                     ])
                                     ->default('nuevo')
-                                    ->required(),
+                                    ->required()
+                                    ->disabled() ,
                                 TextInput::make('first_last_name')
                                     ->label('Primer Apellido')
                                     ->debounce(1500)

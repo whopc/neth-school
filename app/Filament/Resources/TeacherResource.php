@@ -39,6 +39,10 @@ class TeacherResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('id_number')
                     ->label('Cédula')
+                    ->placeholder('Please enter your identification number')
+                    ->mask('999-9999999-9')
+                    ->maxLength(13)
+                    ->minLength(13)
                     ->required()
                     ->maxLength(255),
                 Forms\Components\DatePicker::make('dob')

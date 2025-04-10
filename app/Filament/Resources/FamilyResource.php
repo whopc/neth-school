@@ -292,6 +292,7 @@ class FamilyResource extends Resource
                                                 Select::make('role')
                                                     ->options(['father' => 'Father', 'mother' => 'Mother'])
                                                     ->default('mother')
+                                                    ->hidden(fn() => true)
                                                     ->columnSpan(2),
                                             ]),
                                     ])
@@ -350,6 +351,7 @@ class FamilyResource extends Resource
                                                 Select::make('role')
                                                     ->options(['father' => 'Father', 'mother' => 'Mother'])
                                                     ->default('mother')
+                                                    ->hidden(fn() => true)
                                                     ->columnSpan(2),
                                             ]),
                                     ])
