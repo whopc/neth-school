@@ -7,11 +7,14 @@ use App\Filament\Resources\GradeResource\RelationManagers;
 use App\Models\Grade;
 use Filament\Forms;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use App\Models\Level;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -40,7 +43,14 @@ class GradeResource extends Resource
                         ->numeric()
                         ->required()
                         ->default(0),
-                    TextInput::make('name')->required()->label('Nombre'),
+
+                    TextInput::make('name')
+                        ->required()
+                        ->label('Nombre'),
+                    Select::make('level_id')
+                        ->label('Nivel')
+                        ->relationship('level', 'name')
+                        ->required(),
                 ])
             ]);
     }
@@ -51,6 +61,10 @@ class GradeResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
+                    ->searchable(),
+                TextColumn::make('level.name')
+                    ->label('Nivel')
+                    ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('order')
                     ->numeric()

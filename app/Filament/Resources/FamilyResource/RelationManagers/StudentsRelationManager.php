@@ -251,7 +251,7 @@ class StudentsRelationManager extends RelationManager
 
                 // Mostrar la sección del último registro en StudentYear
                 TextColumn::make('studentYears.section.name')
-                    ->label('Section')
+                    ->label('ClassSection')
                     ->sortable()
                     ->searchable()
                     ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->section->name ?? 'N/A'),

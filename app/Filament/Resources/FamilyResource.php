@@ -88,7 +88,21 @@ class FamilyResource extends Resource
                                                 TextInput::make('id_number')
                                                     ->label('Número de Identificación')
                                                     ->required()
-                                                    ->rules(['unique:progenitors,id_number'])
+                                                    ->rules(function (callable $get) {
+                                                        return function ($attribute, $value, $fail) use ($get) {
+                                                            $recordId = $get('id'); // Opcional: ID del registro actual si estás editando un registro existente
+
+                                                            $exists = Progenitor::where('id_number', $value)
+                                                                ->when($recordId, function ($query) use ($recordId) {
+                                                                    $query->where('id', '!=', $recordId); // Ignorar el registro actual si aplica
+                                                                })
+                                                                ->exists();
+
+                                                            if ($exists) {
+                                                                $fail('Este número de identificación ya está asignado a otra persona.');
+                                                            }
+                                                        };
+                                                    })
                                                     ->placeholder('Please enter your identification number')
                                                     ->mask(fn(callable $get) => $get('id_type') === 'national_id' ? '999-9999999-9' : null)
                                                     ->maxLength(fn(callable $get) => $get('id_type') === 'national_id' ? 13 : null)
@@ -97,12 +111,16 @@ class FamilyResource extends Resource
                                                 TextInput::make('home_phone')
                                                     ->label('Numero local')
                                                     ->tel()
-                                                    ->mask('(999) 999-9999') // Aplicar la máscara fija para formato de teléfono
-                                                    ->maxLength(14) // Longitud máxima incluyendo paréntesis, espacio y guión
-                                                    ->minLength(14) // Longitud mínima requerida
+                                                    ->mask('999-999-9999') // Aplicar la máscara fija para formato de teléfono
+                                                    ->maxLength(12) // Longitud máxima incluyendo paréntesis, espacio y guión
+                                                    ->minLength(12) // Longitud mínima requerida
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('home_phone', $state)),
                                                 TextInput::make('mobile_phone')
                                                     ->label('Numero Mobil')
+                                                    ->tel()
+                                                    ->mask('999-999-9999') // Aplicar la máscara fija para formato de teléfono
+                                                    ->maxLength(12) // Longitud máxima incluyendo paréntesis, espacio y guión
+                                                    ->minLength(12) // Longitud mínima requerida
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('mobile_phone', strtoupper($state))),
                                                 TextInput::make('place_of_work')
@@ -111,6 +129,10 @@ class FamilyResource extends Resource
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('place_of_work', strtoupper($state))),
                                                 TextInput::make('work_phone')
                                                     ->label('Numero de Trabajo')
+                                                    ->tel()
+                                                    ->mask('999-999-9999') // Aplicar la máscara fija para formato de teléfono
+                                                    ->maxLength(12) // Longitud máxima incluyendo paréntesis, espacio y guión
+                                                    ->minLength(12) // Longitud mínima requerida
                                                     ->nullable()
                                                     ->afterStateUpdated(fn($state, callable $set) => $set('work_phone', strtoupper($state))),
                                                 TextInput::make('email')
@@ -292,7 +314,7 @@ class FamilyResource extends Resource
                                                 Select::make('role')
                                                     ->options(['father' => 'Father', 'mother' => 'Mother'])
                                                     ->default('mother')
-                                                    ->hidden(fn() => true)
+                                                   // ->hidden(fn() => true)
                                                     ->columnSpan(2),
                                             ]),
                                     ])

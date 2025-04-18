@@ -14,13 +14,10 @@ return new class extends Migration
         Schema::create('student_years', function (Blueprint $table) {
             $table->id();
             $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
-            $table->foreignId('academic_year_id')->constrained('academic_years')->onDelete('cascade');
-            $table->foreignId('level_id')->constrained('levels')->onDelete('cascade');
-            $table->foreignId('grade_id')->constrained('grades')->onDelete('cascade');
-            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
+            $table->foreignId('grade_class_section_id')->constrained('grade_class_sections')->onDelete('cascade');
             $table->string('classroom')->nullable();
             $table->string('order_no')->comment('Número de orden del estudiante en la sección')->nullable();
-            $table->unique(['section_id', 'order_no'], 'unique_section_order');
+            $table->unique(['grade_class_section_id', 'order_no'], 'unique_class_section_order');
             $table->string('notes')->nullable();
             $table->decimal('registration_discount', 8, 2)->nullable(); // Descuento para inscripción
             $table->enum('registration_discount_type', ['percentage', 'fixed'])->default('percentage'); // Tipo de descuento (porcentaje o monto fijo)

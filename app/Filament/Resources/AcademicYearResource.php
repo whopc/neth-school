@@ -7,13 +7,15 @@ use App\Models\Grade;
 use App\Models\Level;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Filament\Forms\Form;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use App\Models\AcademicYear;
 //use App\Models\AcademicLevel;
 //use App\Models\AcademicGrade;
-use App\Models\Section;
+use App\Models\ClassSection;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs\Tab;
@@ -61,9 +63,30 @@ class AcademicYearResource extends Resource
                                     DatePicker::make('start_date')->required()->label('Fecha Inicio'),
                                     DatePicker::make('end_date')->required()->label('Fecha Fin'),]),
                                 Forms\Components\Toggle::make('status')
-                                    ->label('Estado')
-                                    ->default(0)
-                                    ->required(),
+                                    ->label('Activo')
+                                    ->default(false)
+                                    ->reactive()
+                                    ->afterStateUpdated(function ($state, callable $set, $record) {
+                                        if ($state) {
+                                            // Verificar si hay otro año académico activo
+                                            $activeExists = AcademicYear::where('status', true)
+                                                ->when($record, fn($query) => $query->where('id', '!=', $record->id))
+                                                ->exists();
+
+                                            if ($activeExists) {
+                                                Notification::make()
+                                                    ->warning()
+                                                    ->title('¡Advertencia!')
+                                                    ->body('Ya existe un año académico activo. Debes desactivar el año actual antes de activar otro.')
+                                                    ->persistent()
+                                                    ->send();
+
+                                                $set('status', false);
+                                                return;
+                                            }
+                                        }
+                                    }),
+
 
                             ]),
 
@@ -155,19 +178,19 @@ class AcademicYearResource extends Resource
                                                 Forms\Components\Checkbox::make('platform')
                                                     ->label('Progrentis'),
 
-                                                Forms\Components\Repeater::make('gradeSections')->label('Secciones')
+                                                Forms\Components\Repeater::make('gradeClassSections')->label('Secciones')
                                                     ->columns(2)
-                                                    ->relationship('gradeSections')
+                                                    ->relationship('gradeClassSections')
                                                     ->schema([
-                                                        Select::make('section_id')
+                                                        Select::make('class_section_id')
                                                             ->label('Sección')
-                                                            ->relationship('section', 'name') // Adjust according to your Section model
+                                                            ->relationship('classSection', 'name') // Adjust according to your ClassSection model
                                                             ->options(function (callable $get) {
                                                                 // Obtén el grade_id seleccionado
                                                                 $gradeId = $get('../../grade_id');
 
                                                                 // Busca las secciones asociadas con el grade_id
-                                                                return Section::where('grade_id', $gradeId)
+                                                                return ClassSection::where('grade_id', $gradeId)
                                                                     ->pluck('name', 'id') // Devuelve las opciones de las secciones
                                                                     ->toArray(); // Convierte a un array para que Filament lo pueda utilizar
                                                             })
@@ -179,11 +202,12 @@ class AcademicYearResource extends Resource
                                                             ->fixIndistinctState()
                                                             ->label('Profesor Tutor'),
 
+
                                                     ])
                                                     ->grid(2)
                                                     ->itemLabel(function (array $state): ?string {
                                                         // Obtiene el nombre de la sección basado en section_id
-                                                        $section = Section::find($state['section_id'] ?? null);
+                                                        $section = ClassSection::find($state['class_section_id'] ?? null);
                                                         return $section ? "Sección: {$section->name}" : 'Nueva Sección';
                                                     }),
                                             ])
@@ -215,6 +239,40 @@ class AcademicYearResource extends Resource
             ->columns([
                 TextColumn::make('name')->label('Año Académico'),
                 //TextColumn::make('short_name'),
+                Tables\Columns\IconColumn::make('status')
+                    ->boolean()
+                    ->label('Estado')
+                    ->action(
+                        Tables\Actions\Action::make('toggleStatus')
+                            ->requiresConfirmation()
+                            ->modalHeading('Cambiar Estado del Año Académico')
+                            ->modalSubheading(fn ($record) =>
+                            $record->status
+                                ? '¿Estás seguro que deseas desactivar este año académico?'
+                                : '¿Estás seguro que deseas activar este año académico? Esto desactivará cualquier otro año activo.'
+                            )
+                            ->modalButton('Sí, cambiar estado')
+                            ->action(function (AcademicYear $record): void {
+                                if (!$record->status) {
+                                    // Si se está activando, desactivar otros años académicos
+                                    AcademicYear::where('status', true)
+                                        ->where('id', '!=', $record->id)
+                                        ->update(['status' => false]);
+                                }
+
+                                $record->status = !$record->status;
+                                $record->save();
+
+                                Notification::make()
+                                    ->success()
+                                    ->title('Estado actualizado')
+                                    ->body($record->status
+                                        ? 'El año académico ha sido activado'
+                                        : 'El año académico ha sido desactivado')
+                                    ->send();
+                            })
+                    ),
+
                 TextColumn::make('start_date')->label('Fecha Inicio'),
                 TextColumn::make('end_date')->label('Fecha Fin'),
             ])

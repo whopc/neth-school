@@ -41,6 +41,26 @@ class TeacherResource extends Resource
                     ->label('Cédula')
                     ->placeholder('Please enter your identification number')
                     ->mask('999-9999999-9')
+                    //->unique()
+//                    ->rules([
+//                        'unique:teachers,id_number' => __('Esta cédula pertenece a otra docente ya registrado.'),
+//                    ])
+                    ->rules(function (callable $get) {
+                        return function ($attribute, $value, $fail) use ($get) {
+                            $recordId = $get('id'); // Opcional: ID del registro actual si estás editando un registro existente
+
+                            $exists = Teacher::where('id_number', $value)
+                                ->when($recordId, function ($query) use ($recordId) {
+                                    $query->where('id', '!=', $recordId); // Ignorar el registro actual si aplica
+                                })
+                                ->exists();
+
+                            if ($exists) {
+                                $fail('Este número de identificación ya está asignado a otra persona.');
+                            }
+                        };
+                    })
+
                     ->maxLength(13)
                     ->minLength(13)
                     ->required()

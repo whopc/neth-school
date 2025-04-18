@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Models\AcademicYear;
 use App\Models\Family;
 use App\Models\Progenitor;
-use App\Models\Section;
+use App\Models\ClassSection;
 use Closure;
 use Filament\Forms;
 use Filament\Forms\Components\Radio;
@@ -35,7 +35,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\StudentResource\RelationManagers;
 use App\Models\AcademicGrade;
 use App\Models\AcademicLevel;
-use App\Models\GradeSection;
+use App\Models\GradeClassSection;
 
 
 class StudentResource extends Resource
@@ -299,7 +299,7 @@ class StudentResource extends Resource
                         ->schema([
                             Grid::make()->columns(2)->schema([
                                 Select::make('student_year.academic_year_id')
-                                    ->label('Año Academico')
+                                    ->label('Año Académico')
                                     ->options(function () {
                                         return AcademicYear::pluck('name', 'id')->toArray();
                                     })
@@ -326,10 +326,14 @@ class StudentResource extends Resource
                                     ->label('Grado')
                                     ->options(function (callable $get) {
                                         $levelId = $get('student_year.level_id');
-                                        if (!$levelId) return [];
+                                        $academicYearId = $get('student_year.academic_year_id');
+                                        if (!$levelId || !$academicYearId) return [];
 
-                                        return \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($levelId) {
-                                            $query->where('level_id', $levelId);
+                                        return \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($levelId, $academicYearId) {
+                                            $query->where('level_id', $levelId)
+                                                ->whereHas('academicYear', function($q) use ($academicYearId) {
+                                                    $q->where('id', $academicYearId);
+                                                });
                                         })
                                             ->join('grades', 'academic_grades.grade_id', '=', 'grades.id')
                                             ->pluck('grades.name', 'grades.id')
@@ -339,14 +343,26 @@ class StudentResource extends Resource
                                     ->required()
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
-                                Select::make('student_year.section_id')
+                                Select::make('student_year.grade_class_section_id')
                                     ->label('Sección')
                                     ->options(function (callable $get) {
                                         $gradeId = $get('student_year.grade_id');
-                                        if (!$gradeId) return [];
+                                        $academicYearId = $get('student_year.academic_year_id');
+                                        if (!$gradeId || !$academicYearId) return [];
 
-                                        return Section::where('grade_id', $gradeId)
-                                            ->pluck('name', 'id')
+                                        // Buscar todas las AcademicGrades relacionadas con este grado y año académico
+                                        $academicGradeIds = \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($academicYearId) {
+                                            $query->where('academic_year_id', $academicYearId);
+                                        })
+                                            ->where('grade_id', $gradeId)
+                                            ->pluck('id')
+                                            ->toArray();
+
+                                        // Buscar todas las GradeClassSections relacionadas con esas AcademicGrades
+                                        return \App\Models\GradeClassSection::whereIn('academic_grade_id', $academicGradeIds)
+                                            ->join('class_sections', 'grade_class_sections.class_section_id', '=', 'class_sections.id')
+                                            ->select('grade_class_sections.id', 'class_sections.name')
+                                            ->pluck('class_sections.name', 'grade_class_sections.id')
                                             ->toArray();
                                     })
                                     ->required()
@@ -355,6 +371,7 @@ class StudentResource extends Resource
                                 TextInput::make('student_year.classroom')
                                     ->label('Aula')
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
+
                                 TextInput::make('minerd_id')
                                     ->label('Código Minerd')
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
@@ -398,6 +415,7 @@ class StudentResource extends Resource
                                     ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
                             ]),
                         ])
+
                         ->description('Proporcionar los detalles Academicos.')
                         ->visible(fn ($livewire) => $livewire instanceof Pages\CreateStudent),
 
@@ -432,18 +450,28 @@ class StudentResource extends Resource
                     ->sortable()
                     ->formatStateUsing(fn ($record) => "{$record->first_last_name} {$record->second_last_name}")
                     ->searchable(),
-                TextColumn::make('studentYears.grade.name')
+                // Mostrar el grado del estudiante a través de la relación correcta
+                TextColumn::make('studentYears.gradeClassSection.academicGrade.grade.name')
                     ->label('Grado')
                     ->sortable()
                     ->searchable()
-                    ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->grade->name ?? 'N/A'),
+                    ->formatStateUsing(function($record) {
+                        $latestStudentYear = $record->studentYears()->latest()->first();
+                        if (!$latestStudentYear) return 'N/A';
+                        return $latestStudentYear->gradeClassSection?->academicGrade?->grade?->name ?? 'N/A';
+                    }),
 
-                // Mostrar la sección del último registro en StudentYear
-                TextColumn::make('studentYears.section.name')
+                // Mostrar la sección del estudiante a través de la relación correcta
+                TextColumn::make('studentYears.gradeClassSection.classSection.name')
                     ->label('Sección')
                     ->sortable()
                     ->searchable()
-                    ->formatStateUsing(fn($record) => $record->studentYears()->latest()->first()?->section->name ?? 'N/A'),
+                    ->formatStateUsing(function($record) {
+                        $latestStudentYear = $record->studentYears()->latest()->first();
+                        if (!$latestStudentYear) return 'N/A';
+                        return $latestStudentYear->gradeClassSection?->classSection?->name ?? 'N/A';
+                    }),
+
 
             ])
             ->filters([

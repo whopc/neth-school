@@ -4,7 +4,7 @@ namespace App\Filament\Resources\StudentResource\RelationManagers;
 
 use App\Models\AcademicGrade;
 use App\Models\AcademicYear;
-use App\Models\Section;
+use App\Models\ClassSection;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Radio;
@@ -14,6 +14,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,11 +28,6 @@ class StudentYearsRelationManager extends RelationManager
         return $form
             ->schema([
                 Grid::make()->columns(2)->schema([
-//                    Select::make('academic_year_id')
-//                        ->label('Año Académico')
-//                        ->options(AcademicYear::pluck('name', 'id')->toArray())
-//                        ->reactive()
-//                        ->required(),
                     Select::make('academic_year_id')
                         ->label('Año Académico')
                         ->options(function (callable $get) {
@@ -45,7 +41,10 @@ class StudentYearsRelationManager extends RelationManager
 
                             // Obtener los IDs de los años académicos ya asociados al estudiante
                             $existingAcademicYears = \App\Models\StudentYear::where('student_id', $studentId)
-                                ->pluck('academic_year_id')
+                                ->join('grade_class_sections', 'student_years.grade_class_section_id', '=', 'grade_class_sections.id')
+                                ->join('academic_grades', 'grade_class_sections.academic_grade_id', '=', 'academic_grades.id')
+                                ->join('academic_levels', 'academic_grades.academic_level_id', '=', 'academic_levels.id')
+                                ->pluck('academic_levels.academic_year_id')
                                 ->toArray();
 
                             // Filtrar los años académicos excluyendo los ya asociados al estudiante
@@ -65,8 +64,8 @@ class StudentYearsRelationManager extends RelationManager
                             }
                             // Obtener los niveles asociados al año académico seleccionado
                             return \App\Models\AcademicLevel::where('academic_year_id', $academicYearId)
-                                ->join('levels', 'academic_levels.level_id', '=', 'levels.id') // Unir con la tabla 'levels'
-                                ->pluck('levels.name', 'levels.id') // Obtener 'name' e 'id' de 'levels'
+                                ->join('levels', 'academic_levels.level_id', '=', 'levels.id')
+                                ->pluck('levels.name', 'levels.id')
                                 ->toArray();
                         })
                         ->reactive()
@@ -76,43 +75,59 @@ class StudentYearsRelationManager extends RelationManager
                         ->label('Grado')
                         ->options(function (callable $get) {
                             $levelId = $get('level_id');
-                            if (!$levelId) {
+                            $academicYearId = $get('academic_year_id');
+                            if (!$levelId || !$academicYearId) {
                                 return [];
                             }
-                            // Obtener los grados asociados al nivel seleccionado
-                            return \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($levelId) {
-                                $query->where('level_id', $levelId);
+                            // Obtener los grados asociados al nivel seleccionado y al año académico
+                            return \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($levelId, $academicYearId) {
+                                $query->where('level_id', $levelId)
+                                    ->whereHas('academicYear', function($q) use ($academicYearId) {
+                                        $q->where('id', $academicYearId);
+                                    });
                             })
-                                ->join('grades', 'academic_grades.grade_id', '=', 'grades.id') // Unir con la tabla 'grades'
-                                ->pluck('grades.name', 'grades.id') // Obtener 'name' e 'id' de 'grades'
+                                ->join('grades', 'academic_grades.grade_id', '=', 'grades.id')
+                                ->pluck('grades.name', 'grades.id')
                                 ->toArray();
                         })
                         ->reactive()
                         ->required(),
 
-                    Select::make('section_id')
+                    Select::make('grade_class_section_id')
                         ->label('Sección')
                         ->options(function (callable $get) {
                             $gradeId = $get('grade_id');
-                            if (!$gradeId) {
+                            $academicYearId = $get('academic_year_id');
+                            if (!$gradeId || !$academicYearId) {
                                 return [];
                             }
-                            return Section::where('grade_id', $gradeId)
-                                ->pluck('name', 'id')
+
+                            // Buscar todas las AcademicGrades relacionadas con este grado y año académico
+                            $academicGradeIds = \App\Models\AcademicGrade::whereHas('academicLevel', function ($query) use ($academicYearId) {
+                                $query->where('academic_year_id', $academicYearId);
+                            })
+                                ->where('grade_id', $gradeId)
+                                ->pluck('id')
+                                ->toArray();
+
+                            // Buscar todas las GradeClassSections relacionadas con esas AcademicGrades
+                            return \App\Models\GradeClassSection::whereIn('academic_grade_id', $academicGradeIds)
+                                ->join('class_sections', 'grade_class_sections.class_section_id', '=', 'class_sections.id')
+                                ->select('grade_class_sections.id', 'class_sections.name')
+                                ->pluck('class_sections.name', 'grade_class_sections.id')
                                 ->toArray();
                         })
                         ->required(),
 
                     TextInput::make('classroom')
                         ->label('Aula')
-                        ->placeholder('Enter the classroom')
+                        ->placeholder('Ingrese el aula')
                         ->nullable(),
 
                     TextInput::make('order_no')
-                        ->label('Numero de Orden')
+                        ->label('Número de Orden')
                         ->numeric()
-                        ->placeholder('Enter the order number')
-                        ->required(),
+                        ->placeholder('Ingrese el número de orden'),
 
                     Textarea::make('notes')
                         ->label('Notas')
@@ -142,12 +157,13 @@ class StudentYearsRelationManager extends RelationManager
                     Radio::make('monthly_discount_type')
                         ->label('Tipo de Descuento')
                         ->options([
-                            'percentage' => 'v',
+                            'percentage' => 'Porciento',
                             'fixed' => 'Fijo',
                         ])
                         ->default('percentage')
                         ->required(),
                 ]),
+
             ]);
 
     }
@@ -157,22 +173,26 @@ class StudentYearsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('academic_year_id')
             ->columns([
-                Tables\Columns\TextColumn::make('academicYear.name')
+                TextColumn::make('gradeClassSection.academicGrade.academicLevel.academicYear.name')
                     ->label('Año Académico')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('level.name')
+                TextColumn::make('gradeClassSection.academicGrade.academicLevel.level.name')
                     ->label('Nivel')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('section.grade.name')
+                TextColumn::make('gradeClassSection.academicGrade.grade.name')
                     ->label('Grado')
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('section.name')
+                TextColumn::make('gradeClassSection.classSection.name')
                     ->label('Sección')
                     ->sortable()
                     ->searchable(),
+                TextColumn::make('order_no')
+                    ->label('Orden')
+                    ->sortable(),
+
             ])
             ->filters([
                 //

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('grades', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('level_id')->constrained('levels')->onDelete('cascade');
             $table->string('name');
             $table->unsignedInteger('order')->default(0);
             $table->timestamps();

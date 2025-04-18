@@ -39,8 +39,16 @@ class AcademicLevel extends Model
     }
     public function grades()
     {
-        return $this->hasManyThrough(Grade::class, AcademicGrade::class, 'academic_level_id', 'id', 'id', 'grade_id');
+        return $this->hasManyThrough(
+            Grade::class,               // Modelo final (Grade)
+            AcademicGrade::class,       // Modelo intermedio (AcademicGrade)
+            'academic_level_id',        // Clave foránea en AcademicGrade que apunta a AcademicLevel
+            'id',                       // Clave foránea en Grade
+            'id',                       // Clave primaria en AcademicLevel
+            'grade_id'                  // Clave primaria en AcademicGrade que apunta a Grade
+        );
     }
+
 
 
 }

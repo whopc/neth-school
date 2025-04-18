@@ -88,7 +88,7 @@ class Student extends Model
             $user = \App\Models\User::create([
                 'type_id'           => Type::STUDENT, // Rol Teacher
                 'name'              => $student->first_name . ' ' . $student->last_name,
-                'email'             => $student->user_email,
+                'email'             => $student->email,
                 'password'          => bcrypt(date('Ymd', strtotime($student->dob))), // AñoMesDía como contraseña
                 'email_verified_at' => now(),
             ]);

@@ -3,35 +3,34 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class AcademicYearsTableSeeder extends Seeder
 {
-
     /**
-     * Auto generated seed file
-     *
-     * @return void
+     * Run the database seeds.
      */
-    public function run()
+    public function run(): void
     {
-        
+        $academicYears = [];
+        $startYear = 2010; // Año inicial
+        $endYear = 2024; // Último año académico
 
-        \DB::table('academic_years')->delete();
-        
-        \DB::table('academic_years')->insert(array (
-            0 => 
-            array (
-                'id' => 1,
-                'name' => '2024-2025',
-                'short_name' => '24-25',
-                'start_date' => '2024-08-01',
-                'end_date' => '2025-06-30',
-                'status' => 1,
-                'created_at' => '2025-02-06 14:36:09',
-                'updated_at' => '2025-02-06 14:48:05',
-            ),
-        ));
-        
-        
+        for ($year = $startYear; $year <= $endYear; $year++) {
+            $nextYear = $year + 1;
+
+            $academicYears[] = [
+                'name' => "{$year}-{$nextYear}", // Ejemplo: "2010-2011"
+                'short_name' => (string) $year, // Ejemplo: "2010"
+                'start_date' => "{$year}-08-01", // Fecha de inicio (ajustable)
+                'end_date' => "{$nextYear}-06-30", // Fecha de fin (ajustable)
+                'status' => $year === $endYear, // Solo el último año (2024-2025) está activo
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        // Insertar en la tabla academic_years
+        DB::table('academic_years')->insert($academicYears);
     }
 }

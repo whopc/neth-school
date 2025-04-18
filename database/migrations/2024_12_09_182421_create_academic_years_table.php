@@ -15,9 +15,10 @@ return new class extends Migration
                 $table->id(); // Creates an auto-incrementing id column
                 $table->string('name'); // Column for the academic year “2024-2025”
                 $table->string('short_name'); //  Short name for the academic year “2024”
-                $table->date('start_date'); // Column for start date
-                $table->date('end_date'); // Column for end date
-                $table->boolean('status');
+                $table->boolean('is_registration_active')->default(0);
+                $table->date('start_date')->nullable(); // Column for start date
+                $table->date('end_date')->nullable(); // Column for end date
+                $table->boolean('status')->nullable();
                 $table->timestamps(); // Creates created_at and updated_at columns
         });
     }

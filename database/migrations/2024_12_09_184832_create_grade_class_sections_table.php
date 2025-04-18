@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('grade_sections', function (Blueprint $table) {
+        Schema::create('grade_class_sections', function (Blueprint $table) {
             $table->id();
             $table->foreignId('academic_grade_id')->constrained('academic_grades')->onDelete('cascade');
-            $table->foreignId('section_id')->constrained('sections')->onDelete('cascade');
+            $table->foreignId('class_section_id')->constrained('class_sections')->onDelete('cascade');
             $table->unsignedBigInteger('main_teacher_id')->nullable();
             $table->foreign('main_teacher_id')->references('id')->on('teachers')->onDelete('set null');
-            $table->unique(['academic_grade_id', 'section_id']);
+            $table->unique(['academic_grade_id', 'class_section_id']);
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('grade_sections');
+        Schema::dropIfExists('grade_class_sections');
     }
 };

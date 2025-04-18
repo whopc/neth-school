@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 
-class SectionsTableSeeder extends Seeder
+class ClassSectionsTableSeeder extends Seeder
 {
 
     /**
@@ -14,12 +14,12 @@ class SectionsTableSeeder extends Seeder
      */
     public function run()
     {
-        
 
-        \DB::table('sections')->delete();
-        
-        \DB::table('sections')->insert(array (
-            0 => 
+
+        \DB::table('class_sections')->delete();
+
+        \DB::table('class_sections')->insert(array (
+            0 =>
             array (
                 'id' => 1,
                 'name' => 'GREEN',
@@ -28,7 +28,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:22:34',
                 'updated_at' => '2025-01-16 15:22:34',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 2,
                 'name' => 'YELLOW',
@@ -37,7 +37,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:22:47',
                 'updated_at' => '2025-01-18 18:16:01',
             ),
-            2 => 
+            2 =>
             array (
                 'id' => 3,
                 'name' => 'BLUE',
@@ -46,7 +46,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:23:03',
                 'updated_at' => '2025-01-16 15:23:03',
             ),
-            3 => 
+            3 =>
             array (
                 'id' => 4,
                 'name' => 'CONCEPCIÓN BONA',
@@ -55,7 +55,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:23:26',
                 'updated_at' => '2025-01-16 15:23:26',
             ),
-            4 => 
+            4 =>
             array (
                 'id' => 5,
                 'name' => 'RAMÓN MATÍAS MELLA',
@@ -64,7 +64,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:24:23',
                 'updated_at' => '2025-01-16 15:24:23',
             ),
-            5 => 
+            5 =>
             array (
                 'id' => 6,
                 'name' => 'FRANCISCO DEL ROSARIO SÁNCHEZ',
@@ -73,7 +73,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:25:25',
                 'updated_at' => '2025-01-16 15:25:25',
             ),
-            6 => 
+            6 =>
             array (
                 'id' => 7,
                 'name' => 'MINERVA MIRABAL',
@@ -82,7 +82,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:25:51',
                 'updated_at' => '2025-01-16 15:25:51',
             ),
-            7 => 
+            7 =>
             array (
                 'id' => 8,
                 'name' => 'MÁXIMO GÓMEZ',
@@ -91,7 +91,7 @@ class SectionsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:26:23',
                 'updated_at' => '2025-01-16 15:26:23',
             ),
-            8 => 
+            8 =>
             array (
                 'id' => 9,
                 'name' => 'PEDRO MIR',
@@ -101,7 +101,7 @@ class SectionsTableSeeder extends Seeder
                 'updated_at' => '2025-01-16 15:26:44',
             ),
         ));
-        
-        
+
+
     }
 }

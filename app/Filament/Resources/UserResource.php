@@ -63,31 +63,34 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\Layout\Split::make([
-                    Tables\Columns\ImageColumn::make('avatar_url')
-                        ->searchable()
-                        ->circular()
-                        ->grow(false)
-                        ->getStateUsing(fn($record) => $record->avatar_url
-                            ? $record->avatar_url
-                            : "https://ui-avatars.com/api/?name=" . urlencode($record->name)),
                     Tables\Columns\TextColumn::make('name')
+                        ->label('Nombre')
                         ->searchable()
                         ->weight(FontWeight::Bold),
+                    Tables\Columns\TextColumn::make('type.name')
+                        ->label('Tipo')
+                        ->getStateUsing(fn ($record) => $record->type?->name ?? 'Sin tipo')
+                        ->searchable(),
                     Tables\Columns\Layout\Stack::make([
                         Tables\Columns\TextColumn::make('roles.name')
+                            ->label('Roles')
+                            ->getStateUsing(fn ($record) => $record->roles->pluck('name')->join(', '))
                             ->searchable()
                             ->icon('heroicon-o-shield-check')
                             ->grow(false),
                         Tables\Columns\TextColumn::make('email')
+                            ->label('Correo')
                             ->icon('heroicon-m-envelope')
                             ->searchable()
                             ->grow(false),
-                    ])->alignStart()->visibleFrom('lg')->space(1)
+                    ])->alignStart()->visibleFrom('lg')->space(1),
                 ]),
             ])
-            ->filters([
+
+        ->filters([
                 //
                 SelectFilter::make('roles')
+                    ->label('Roles')
                     ->relationship('roles', 'name')
                     ->multiple()
                     ->preload(),
@@ -111,7 +114,7 @@ class UserResource extends Resource
                 Tables\Actions\DeleteAction::make(),
             ])
             ->headerActions([
-          
+
             ])
             ->bulkActions([
 

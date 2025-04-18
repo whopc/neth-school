@@ -69,10 +69,10 @@ class Teacher extends Model implements AuthenticatableContract
         });
     }
 
-    // Relación con GradeSection
+    // Relación con GradeClassSection
     public function gradeSections()
     {
-        return $this->hasMany(GradeSection::class);
+        return $this->hasMany(GradeClassSection::class);
     }
 
     // Relación con User

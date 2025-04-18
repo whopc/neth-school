@@ -11,7 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('levels', function (Blueprint $table) {
+        Schema::create('levels', /**
+         * Create a new table schema in the database.
+         * This function defines the blueprint for the table structure.
+         *
+         * @param Blueprint $table The table schema definition instance.
+         *
+         * @property int $id The primary key for the table.
+         * @property string $name The name field of the table.
+         * @property int|null $order The order field for sorting, nullable.
+         * @property \Illuminate\Support\Carbon|null $created_at The timestamp when the record was created.
+         * @property \Illuminate\Support\Carbon|null $updated_at The timestamp when the record was last updated.
+         */ function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->unsignedInteger('order')->nullable();

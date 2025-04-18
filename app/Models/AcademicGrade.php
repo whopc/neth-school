@@ -3,7 +3,7 @@
 namespace App\Models;
 use App\Models\AcademicLevel;
 use App\Models\Grade;
-use App\Models\GradeSection;
+use App\Models\GradeClassSection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,9 +28,9 @@ class AcademicGrade extends Model
         return $this->belongsTo(Grade::class, 'grade_id');
     }
 
-    public function gradeSections()
+    public function gradeClassSections()
     {
-        return $this->hasMany(GradeSection::class , 'academic_grade_id');
+        return $this->hasMany(GradeClassSection::class , 'academic_grade_id');
     }
     protected function resolveItemLabel(array $state, string $modelClass, string $fieldKey, string $labelField): ?string
     {

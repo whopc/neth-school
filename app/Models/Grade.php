@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Models;
-use App\Models\AcademicGrade;
-use App\Models\Section;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,7 +10,8 @@ class Grade extends Model
 
     protected $fillable = [
         'name',
-        'order'
+        'order',
+        'level_id',
     ];
 
     public function academicGrades()
@@ -21,6 +20,11 @@ class Grade extends Model
     }
     public function sections()
     {
-        return $this->hasMany(Section::class);
+        return $this->hasMany(ClassSection::class);
     }
+    public function level()
+    {
+        return $this->belongsTo(Level::class);
+    }
+
 }

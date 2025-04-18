@@ -49,12 +49,17 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
 
         ]);
+        //$this->call(ShieldSeeder::class);
+        $this->call(AcademicYearsTableSeeder::class);
+        $this->call(LevelsTableSeeder::class);
+        $this->call(GradesTableSeeder::class);
+        $this->call(ClassSectionsTableSeeder::class);
 
 
 //        $this->call(GradesTableSeeder::class);
 //        $this->call(LevelsTableSeeder::class);
 //        $this->call(TeachersTableSeeder::class);
-//        $this->call(SectionsTableSeeder::class);
+//        $this->call(ClassSectionsTableSeeder::class);
 //        $this->call(AcademicYearsTableSeeder::class);
 //        $this->call(AcademicLevelsTableSeeder::class);
 //        $this->call(AcademicGradesTableSeeder::class);

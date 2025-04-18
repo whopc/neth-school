@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Section;
+use App\Models\ClassSection;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class SectionPolicy
@@ -21,7 +21,7 @@ class SectionPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Section $section): bool
+    public function view(User $user, ClassSection $section): bool
     {
         return $user->can('view_section');
     }
@@ -37,7 +37,7 @@ class SectionPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Section $section): bool
+    public function update(User $user, ClassSection $section): bool
     {
         return $user->can('update_section');
     }
@@ -45,7 +45,7 @@ class SectionPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Section $section): bool
+    public function delete(User $user, ClassSection $section): bool
     {
         return $user->can('delete_section');
     }
@@ -61,7 +61,7 @@ class SectionPolicy
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Section $section): bool
+    public function forceDelete(User $user, ClassSection $section): bool
     {
         return $user->can('force_delete_section');
     }
@@ -77,7 +77,7 @@ class SectionPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Section $section): bool
+    public function restore(User $user, ClassSection $section): bool
     {
         return $user->can('restore_section');
     }
@@ -93,7 +93,7 @@ class SectionPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Section $section): bool
+    public function replicate(User $user, ClassSection $section): bool
     {
         return $user->can('replicate_section');
     }

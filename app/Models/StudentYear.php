@@ -11,10 +11,7 @@ class StudentYear extends Model
 
     protected $fillable = [
         'student_id',
-        'academic_year_id',
-        'level_id',
-        'grade_id',
-        'section_id',
+        'grade_class_section_id',
         'classroom',
         'order_no',
         'notes',
@@ -33,23 +30,9 @@ class StudentYear extends Model
         return $this->belongsTo(Student::class);
     }
 
-    public function academicYear()
+    public function gradeClassSection()
     {
-        return $this->belongsTo(AcademicYear::class);
+        return $this->belongsTo(GradeClassSection::class);
     }
 
-    public function level()
-    {
-        return $this->belongsTo(Level::class);
-    }
-
-    public function grade()
-    {
-        return $this->belongsTo(Grade::class);
-    }
-
-    public function section()
-    {
-        return $this->belongsTo(Section::class);
-    }
 }

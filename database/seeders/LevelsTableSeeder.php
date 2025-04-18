@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class LevelsTableSeeder extends Seeder
 {
@@ -14,12 +15,12 @@ class LevelsTableSeeder extends Seeder
      */
     public function run()
     {
-        
+
 
         \DB::table('levels')->delete();
-        
+
         \DB::table('levels')->insert(array (
-            0 => 
+            0 =>
             array (
                 'id' => 1,
                 'name' => 'INICIAL',
@@ -27,7 +28,7 @@ class LevelsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:00:42',
                 'updated_at' => '2025-01-16 15:00:42',
             ),
-            1 => 
+            1 =>
             array (
                 'id' => 2,
                 'name' => 'PRIMARIA',
@@ -35,7 +36,7 @@ class LevelsTableSeeder extends Seeder
                 'created_at' => '2025-01-16 15:00:53',
                 'updated_at' => '2025-01-16 15:00:53',
             ),
-            2 => 
+            2 =>
             array (
                 'id' => 3,
                 'name' => 'SECUNDARIA',
@@ -44,7 +45,7 @@ class LevelsTableSeeder extends Seeder
                 'updated_at' => '2025-01-16 15:01:43',
             ),
         ));
-        
-        
+
+
     }
 }

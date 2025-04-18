@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Forms\Components\Card;
 use Filament\Tables;
-use App\Models\Section;
+use App\Models\ClassSection;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -20,9 +20,9 @@ use Filament\Forms\Components\Select;
 
 use function Laravel\Prompts\select;
 
-class SectionResource extends Resource
+class ClassSectionResource extends Resource
 {
-    protected static ?string $model = Section::class;
+    protected static ?string $model = ClassSection::class;
 
     protected static ?string $navigationIcon = 'fas-puzzle-piece';
     protected static ?string $navigationGroup = 'Estructura Académica';
@@ -107,9 +107,9 @@ class SectionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSections::route('/'),
-            'create' => Pages\CreateSection::route('/create'),
-            'edit' => Pages\EditSection::route('/{record}/edit'),
+            'index' => Pages\ListClassSections::route('/'),
+            'create' => Pages\CreateClassSection::route('/create'),
+            'edit' => Pages\EditClassSection::route('/{record}/edit'),
         ];
     }
 }
